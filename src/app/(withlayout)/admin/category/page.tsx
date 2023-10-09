@@ -8,10 +8,6 @@ import {
 } from "@ant-design/icons";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import UMTable from "@/components/ui/UMTable";
-// import {
-//   useDeleteDepartmentMutation,
-//   useDepartmentsQuery,
-// } from "@/redux/api/departmentApi";
 import { Button, Input, message } from "antd";
 import Link from "next/link";
 import { useState } from "react";
@@ -28,7 +24,7 @@ const Category = () => {
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [deleteDepartment] = useDeleteCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   query["limit"] = size;
   query["page"] = page;
@@ -50,11 +46,12 @@ const Category = () => {
   const categorys = data?.categorys;
   const meta = data?.meta;
 
-  const deleteHandler = async (id: string) => {
+  const deleteHandler = async (id: string,data:string) => {
+    alert(`Are you sure Deleting ${data}`);
     message.loading("Deleting.....");
     try {
-      await deleteDepartment(id);
-      message.success("Department Deleted successfully");
+      await deleteCategory(id);
+      message.success("Catagery Deleted successfully");
     } catch (err: any) {
       message.error(err.message);
     }
@@ -82,7 +79,7 @@ const Category = () => {
       render: function (data: any) {
         return (
           <>
-            <Link href={`/admin/categorys/edit/${data?.id}`}>
+            <Link href={`/admin/category/edit/${data?.id}`}>
               <Button
                 style={{
                   margin: "0px 5px",
@@ -94,7 +91,7 @@ const Category = () => {
               </Button>
             </Link>
             <Button
-              onClick={() => deleteHandler(data?.id)}
+              onClick={() => deleteHandler(data?.id,data?.name)}
               type="primary"
               danger
             >

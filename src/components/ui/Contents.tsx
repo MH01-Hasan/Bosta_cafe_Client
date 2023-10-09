@@ -15,18 +15,6 @@ const Contents = ({ children }: { children: React.ReactNode }) => {
       }}
     >
          <Header />
-      <UMBreadCrumb
-        items={[
-          {
-            label: `${base}`,
-            link: `/${base}`,
-          },
-          {
-            label: "seller",
-            link: `/${base}/seller`,
-          },
-        ]}
-      />
       {children}
     </Content>
   );

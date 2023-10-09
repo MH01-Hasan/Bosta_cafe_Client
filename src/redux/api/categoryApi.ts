@@ -31,23 +31,23 @@ export const categoryApi = baseApi.injectEndpoints({
     }),
 
     // get single department by id
-    // category: build.query({
-    //   query: (id) => ({
-    //     url: `${CATEGORY_URL}/${id}`,
-    //     method: "GET",
-    //   }),
-    //   providesTags: [tagTypes.category],
-    // }),
+    category: build.query({
+      query: (id) => ({
+        url: `${CATEGORY_URL}/${id}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.category],
+    }),
 
     // update single department by id
-    // updateCategory: build.mutation({
-    //   query: (data) => ({
-    //     url: `${CATEGORY_URL}/${data.id}`,
-    //     method: "PATCH",
-    //     data: data.body,
-    //   }),
-    //   invalidatesTags: [tagTypes.category],
-    // }),
+    updateCategory: build.mutation({
+      query: (data) => ({
+        url: `${CATEGORY_URL}/${data.id}`,
+        method: "PATCH",
+        data: data.body,
+      }),
+      invalidatesTags: [tagTypes.category],
+    }),
 
     // delete single department by id
     deleteCategory: build.mutation({
@@ -63,11 +63,7 @@ export const categoryApi = baseApi.injectEndpoints({
 export const {
   useCategorysQuery,
     useAddCategoryMutation,
-    useDeleteCategoryMutation
-    
-//   usecategorysQuery,
-//   useAddDepartmentMutation,
-//   useDepartmentQuery, // get single department hooks
-//   useUpdateDepartmentMutation, // update single department hooks
-//   useDeleteDepartmentMutation, // delete single department hooks
+    useDeleteCategoryMutation,
+    useCategoryQuery,
+    useUpdateCategoryMutation
 } = categoryApi;

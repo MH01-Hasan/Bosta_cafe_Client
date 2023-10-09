@@ -28,12 +28,12 @@ export const sidebarItems = (role: string) => {
   const adminSidebarItems: MenuProps["items"] = [
     ...defaultSidebarItems,
     {
-      label: "Product",
+      label: " Product",
       key: "product",
       icon: <AppstoreAddOutlined/>,
       children: [
         {
-          label: <Link href={`/${role}/product`}>Product</Link>,
+          label: <Link href={`/${role}/product`}>All Product</Link>,
           key: `/${role}/product`,
         },
         {
@@ -44,12 +44,12 @@ export const sidebarItems = (role: string) => {
       ],
     },
     {
-      label: "Category",
+      label: " Category",
       key: "category",
       icon: <PlusOutlined/>,
       children: [
         {
-          label: <Link href={`/${role}/category`}>Category</Link>,
+          label: <Link href={`/${role}/category`}>All Category</Link>,
           key: `/${role}/category`,
         },
         {
