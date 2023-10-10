@@ -26,3 +26,18 @@ export interface ICategory {
   updatedAt: string;
   __v: number;
 }
+
+
+export interface IProduct {
+  id:           String; 
+  name :        String;
+  price:        number;
+  flavor:       String;
+  productImage: String;
+  discount :    number;
+  size :        String;
+  createdAt:  String;
+  updatedAt:  String;
+  categoryId: String
+  __v: number;
+}
