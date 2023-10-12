@@ -27,7 +27,7 @@ instance.interceptors.response.use(function (response) {
         meta: response?.data?.meta
         
     }
-    console.log(responseObject,"fetch data")
+    // console.log(responseObject,"fetch data")
     return responseObject;
 }, function (error) {
     const responseObject:IGenericErrorResponse = {
