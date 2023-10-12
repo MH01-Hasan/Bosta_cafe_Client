@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import ActionBar from "@/components/ui/ActionBar";
 import { useDeleteProductMutation, useProductsQuery } from "@/redux/api/productApi";
 import { ICategory } from "@/types";
+import Image from "next/image";
 
 
 const ProductPage = () => {
@@ -57,7 +58,18 @@ const ProductPage = () => {
   const columns = [
     {
       title: "Id",
-      dataIndex: "id",
+      dataIndex: "productImage",
+      render: function (data:any) {
+        return  <Image
+        src={data?.url}
+        width={70}
+        height={60}
+        style={{
+          borderRadius:"10px"
+        }}
+        alt="Picture of the author"
+      />;
+      }
     },
     {
       title: "Name",
