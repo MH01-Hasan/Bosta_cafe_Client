@@ -67,6 +67,7 @@ const UploadImage = ({ name }: ImageUploadProps) => {
         action="/api/file"
         beforeUpload={beforeUpload}
         onChange={handleChange}
+     
       >
         {imageUrl ? (
           <Image

@@ -1,17 +1,19 @@
 import { useState } from "react";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 import axios from "axios";
-import { Progress } from "antd";
+import { Progress, message } from "antd";
 
 const ImageUpload = ({ onSuccess, folder }) => {
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [previewUrl, setPreviewUrl] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [uploadProgress, setUploadProgress] = useState(0);
+	console.log(process.env.NEXT_CLOUDINARY_CLOUD_NAME)
 
 	const uploadImage = async () => {
 		if (!selectedFile) {
-			Swal.fire("Oops!", "Please select an image.", "error");
+			// Swal.fire("Oops!", "Please select an image.", "error");
+			message.error("Please select an image");
 			return;
 		}
 
@@ -23,7 +25,7 @@ const ImageUpload = ({ onSuccess, folder }) => {
 			formData.append("upload_preset", folder);
 
 			const response = await axios.post(
-				`https://api.cloudinary.com/v1_1/${process.env.NEXT_CLOUDINARY_CLOUD_NAME}/auto/upload`,
+				`https://api.cloudinary.com/v1_1/bostaCafe/auto/upload`,
 				formData,
 				{
 					onUploadProgress: (progressEvent) => {
@@ -36,7 +38,7 @@ const ImageUpload = ({ onSuccess, folder }) => {
 			);
 
 			if (response.data.secure_url) {
-				Swal.fire("Success!", "Image uploaded successfully!", "success");
+				message.success("Image uploaded successfully!");
 				onSuccess({
 					url: response.data.secure_url,
 					mediaId: response.data.public_id,
@@ -48,15 +50,13 @@ const ImageUpload = ({ onSuccess, folder }) => {
 				setSelectedFile(null);
 				document.getElementById("image-upload-input").value = "";
 			} else {
-				Swal.fire(
-					"Oops!",
-					"An error occurred while uploading the image.",
-					"error",
-				);
+				message.error("some thing went wrong");
 			}
 		} catch (error) {
 			console.error("Error uploading image:", error);
-			Swal.fire("Oops!", error?.response?.data?.message, "error");
+			message.error(error?.response?.data?.message);
+
+			
 		} finally {
 			setLoading(false);
 			setUploadProgress(0);
@@ -65,6 +65,7 @@ const ImageUpload = ({ onSuccess, folder }) => {
 
 	const handleFileChange = (e) => {
 		const file = e.target.files[0];
+		console.log(file)
 		setSelectedFile(file);
 		const reader = new FileReader();
 		reader.onload = () => {

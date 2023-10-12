@@ -1,4 +1,4 @@
-import { ICategory, IMeta, IProduct } from "@/types";
+import { IMeta, IProduct } from "@/types";
 import { tagTypes } from "../tag-types";
 import { baseApi } from "./baseApi";
 
@@ -12,16 +12,17 @@ export const productApi = baseApi.injectEndpoints({
         method: "GET",
         params: arg,
       }),
-      transformResponse: (response: IProduct, meta: IMeta) => {
+      transformResponse: (response:IProduct, meta: IMeta) => {
         return {
-            products: response,
+          products: response,
           meta,
         };
       },
       providesTags: [tagTypes.product],
     }),
 
-    addCategory: build.mutation({
+
+    addProduct: build.mutation({
       query: (data) => ({
         url: PRODUCT_URL,
         method: "POST",
@@ -61,5 +62,8 @@ export const productApi = baseApi.injectEndpoints({
 });
 
 export const {
- 
+  useProductsQuery,
+  useAddProductMutation,
+  useDeleteProductMutation,
+  useUpdateProductMutation
 } = productApi;

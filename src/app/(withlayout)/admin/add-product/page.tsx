@@ -7,15 +7,21 @@ import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import UploadImage from "@/components/ui/UploadImage";
 import { sizeOptions } from "@/constants/global";
 import { useCategorysQuery } from "@/redux/api/categoryApi";
+import { useAddProductMutation } from "@/redux/api/productApi";
 import { ICategory } from "@/types";
 import { Button, Col, Row, message } from "antd";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
 
 const AddProductPage = () => {
-
+  const router = useRouter();
+  const [addProduct] =useAddProductMutation()
   
-  const { data, isLoading } = useCategorysQuery({ limit: 100, page: 1 });
-  //@ts-ignore
+  const { data, isLoading } = useCategorysQuery({ limit: 10, page: 1 });
+ //@ts-ignore
   const categorys: ICategory[] = data?.categorys;
+
 
   const categoryOptions = 
   categorys &&
@@ -27,16 +33,53 @@ const AddProductPage = () => {
     });
 
       const onSubmit = async (data: any) => {
-        // message.loading("Creating.....");
-        try {
-          console.log(data);
-          // await addCategory(data);
-          message.success("New Product added successfully");
-        } catch (err: any) {
-          console.error(err.message);
-          message.error(err.message);
-        }
-      }
+        message.loading("Creating.....");
+     
+          if (!data?.file) {
+            message.error("Please select an image");
+            return;
+          }
+          try {
+            const formData = new FormData();
+            formData.append("file", data?.file);
+            formData.append("upload_preset", "products");
+      
+            const response = await axios.post(
+              `https://api.cloudinary.com/v1_1/bostaCafe/auto/upload`,
+              formData,
+            );
+      
+            if (response.data.secure_url) {    
+             const imagedata = ({
+                url: response.data.secure_url,
+                mediaId: response.data.public_id,
+                bytes: response.data.bytes,
+                fileType: response.data.format,
+                name: response.data.original_filename,
+              });   
+
+              const Productdata = {
+                name:data?.name,
+                price:data?.price,       
+                flavor:data?.flavor,
+                productImage:imagedata,
+                discount:data?.discount,  
+                size:data?.size,
+                categoryId:data.categoryId
+              }
+              
+              await addProduct(Productdata)
+              message.success("Product upload successfully!");
+              router.push("/admin/product");
+
+            } else {
+              message.error("some thing went wrong");
+            }
+          } catch (error) {
+            console.error("Error uploading image:", error);       
+          } 
+        } 
+      
      
 
     return (
@@ -116,7 +159,7 @@ const AddProductPage = () => {
                 }}
               >
                 <FormInput
-                  type="number"
+                  type="text"
                   name="price"
                   size="large"
                   label="Price"
@@ -160,7 +203,7 @@ const AddProductPage = () => {
                 }}
               >
                 <FormInput
-                  type="number"
+                  type="text"
                   name="discount"
                   size="large"
                   label="Discount"

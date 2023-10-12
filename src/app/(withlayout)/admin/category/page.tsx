@@ -3,10 +3,8 @@
 import {
   DeleteOutlined,
   EditOutlined,
-  EyeOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
-import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import UMTable from "@/components/ui/UMTable";
 import { Button, Input, message } from "antd";
 import Link from "next/link";
@@ -41,10 +39,10 @@ const Category = () => {
     query["searchTerm"] = debouncedTerm;
   }
   const { data, isLoading } = useCategorysQuery({ ...query });
- 
 
   const categorys = data?.categorys;
   const meta = data?.meta;
+ 
 
   const deleteHandler = async (id: string,data:string) => {
     alert(`Are you sure Deleting ${data}`);

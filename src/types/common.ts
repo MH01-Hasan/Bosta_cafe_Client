@@ -31,10 +31,10 @@ export interface ICategory {
 export interface IProduct {
   id:           String; 
   name :        String;
-  price:        number;
+  price:        String;
   flavor:       String;
-  productImage: String;
-  discount :    number;
+  productImage: object;
+  discount :    String;
   size :        String;
   createdAt:  String;
   updatedAt:  String;

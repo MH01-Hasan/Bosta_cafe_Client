@@ -1,7 +1,4 @@
 "use client";
-
-// import Form from "@/components/Forms/Form";
-// import FormInput from "@/components/Forms/FormInput";
 import ActionBar from "@/components/ui/ActionBar";
 import Form from "@/components/ui/Forms/Form";
 import FormInput from "@/components/ui/Forms/FormInput";
@@ -22,11 +19,10 @@ const EditCategoryPage = ({ params }: IDProps) => {
   const onSubmit = async (values: { name: string }) => {
     message.loading("Updating.....");
     try {
-      //   console.log(data);
+
       await updateCategory({ id, body: values });
       message.success("Category updated successfully");
     } catch (err: any) {
-      //   console.error(err.message);
       message.error(err.message);
     }
   };
