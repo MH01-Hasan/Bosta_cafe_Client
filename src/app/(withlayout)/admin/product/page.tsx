@@ -57,7 +57,7 @@ const ProductPage = () => {
 
   const columns = [
     {
-      title: "Id",
+      title: "Image",
       dataIndex: "productImage",
       render: function (data:any) {
         return  <Image
