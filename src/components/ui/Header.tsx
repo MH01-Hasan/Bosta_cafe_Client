@@ -3,6 +3,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { removeUserInfo } from "@/services/auth.service";
 import { authKey } from "@/constants/storageKey";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 const { Header: AntHeader } = Layout;
 
 const Header = () => {
@@ -15,7 +16,7 @@ const Header = () => {
 
   const items: MenuProps["items"] = [
     {
-      key: "0",
+      key: "1",
       label: (
         <Button onClick={logOut} type="text" danger>
           Logout
@@ -36,6 +37,18 @@ const Header = () => {
           height: "100%",
         }}
       >
+        <h1>
+         <Link href="/sales/pos">
+          <Button style={{
+            marginRight:'25px',
+            fontSize:'18px',
+            backgroundColor:"blueviolet",
+            color:'white'
+          }}>
+            Pos
+          </Button>
+         </Link>
+        </h1>
         <Dropdown menu={{ items }}>
           <a>
             <Space wrap size={16}>

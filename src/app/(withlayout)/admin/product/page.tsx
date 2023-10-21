@@ -97,7 +97,12 @@ const ProductPage = () => {
     {
       title: "Discount",
       dataIndex: "discount",
-    },
+      render: (text:any, record:any) => {
+        const inlineStyle = {
+          color: Number(record?.discount) <= Number(0)? "red" : "green", // Change "red" to your desired color
+        };
+        return <p style={inlineStyle}>{text}</p>
+      }},
     {
       title: "CreatedAt",
       dataIndex: "createdAt",

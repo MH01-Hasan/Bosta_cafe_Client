@@ -1,0 +1,33 @@
+.cart-item{
+    background-color: whitesmoke;
+    border-radius: 5px;
+    box-shadow: -3px -3px 9px 0px black;
+    height: 100vh;
+   
+
+
+}
+
+.cart-calculate{
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 20px;
+    margin: 10px;
+}
+.input{
+    width: 50%
+}
+
+.input-field{
+    margin-bottom: 15px;
+    height: 40px;
+}
+
+.action-button{
+    display: flex;
+    justify-content: space-between;
+}
+.button-cart{
+    width: 33.3%;
+    margin: 5px;
+}
