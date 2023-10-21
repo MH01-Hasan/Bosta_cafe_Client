@@ -44,7 +44,7 @@ const Category = () => {
   const meta = data?.meta;
  
 
-  const deleteHandler = async (id: string,data:string) => {
+  const deleteHandler = async (id:string,data:string) => {
     alert(`Are you sure Deleting ${data}`);
     message.loading("Deleting.....");
     try {
@@ -82,7 +82,6 @@ const Category = () => {
                 style={{
                   margin: "0px 5px",
                 }}
-                onClick={() => console.log(data)}
                 type="primary"
               >
                 <EditOutlined />

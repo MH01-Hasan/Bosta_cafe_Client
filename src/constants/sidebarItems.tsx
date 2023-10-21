@@ -2,7 +2,8 @@ import type { MenuProps } from "antd";
 import {
   ProfileOutlined,
   AppstoreAddOutlined,
-  PlusOutlined
+  PlusOutlined,
+  AppstoreOutlined
 } from "@ant-design/icons";
 import Link from "next/link";
 import { USER_ROLE } from "./role";
@@ -43,6 +44,7 @@ export const sidebarItems = (role: string) => {
         },
       ],
     },
+  
     {
       label: " Category",
       key: "category",
@@ -59,7 +61,28 @@ export const sidebarItems = (role: string) => {
         },
       ],
     },
+    {
+      label: "Branch",
+      key: "branch",
+      icon: <AppstoreOutlined />,
+      children: [
+        {
+          label: <Link href={`/${role}/branch`}>All Branch</Link>,
+          key: `/${role}/branch`,
+        },
+        {
+          label: <Link href={`/${role}/creat-branch`}>Creat New Branch</Link>,
+          key: `/${role}/creat-branch`,
+           
+        },
+      ],
+    },
   ];
+
+
+
+
+
 
   // const adminSidebarItems: MenuProps["items"] = [
   //   ...defaultSidebarItems,

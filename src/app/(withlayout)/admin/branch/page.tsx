@@ -11,12 +11,9 @@ import { useState } from "react";
 import { useDebounced } from "@/redux/hooks";
 import dayjs from "dayjs";
 import ActionBar from "@/components/ui/ActionBar";
-import { useDeleteProductMutation, useProductsQuery } from "@/redux/api/productApi";
-import { ICategory } from "@/types";
-import Image from "next/image";
+import { useBranchsQuery, useDeleteBranchMutation } from "@/redux/api/branchApi";
 
-
-const ProductPage = () => {
+const BrancePage = () => {
   const query: Record<string, any> = {};
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(10);
@@ -32,72 +29,60 @@ const ProductPage = () => {
 
   const debouncedTerm = useDebounced({
     searchQuery: searchTerm,
-    delay: 600,
+    delay: 300,
   });
 
   if (!!debouncedTerm) {
     query["searchTerm"] = debouncedTerm;
   }
   
-  const { data, isLoading } = useProductsQuery({...query});
-  const products = data?.products;
+  const { data, isLoading } = useBranchsQuery({...query});
+  const branchs = data?.branchs;
   const meta = data?.meta;
-  const [deleteProduct] = useDeleteProductMutation(); 
+  const [deleteBranch] = useDeleteBranchMutation(); 
 
   const deleteHandler = async (id: string,data:string) => {
     alert(`Are you sure Deleting ${data}`);
     message.loading("Deleting.....");
     try {
-      await deleteProduct(id);
+      await deleteBranch(id);
       message.success("Product Deleted successfully");
     } catch (err: any) {
       message.error(err.message);
     }
   };
 
+ 
   const columns = [
     {
-      title: "Image",
-      dataIndex: "productImage",
-      render: function (data:any) {
-        return  <Image
-        src={data?.url}
-        width={70}
-        height={60}
-        style={{
-          borderRadius:"10px"
-        }}
-        alt="Picture of the author"
-      />;
-      }
+      title: "Branch Id",
+      dataIndex: "username",
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Role",
+      dataIndex: "role",
     },
     {
-      title: "Price",
-      dataIndex: "price",
+      title: "Email",
+      dataIndex: "email",
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      render: function (data: ICategory) {
-        return <>{data?.name}</>;
-      }
-    }, 
-    {
-      title: "Flavor",
-      dataIndex: "flavor",
+      title: "Contact",
+      dataIndex: "contactNo",
     },
     {
-      title: "Size",
-      dataIndex: "size",
+      title: "Address",
+      dataIndex: "address",
     },
     {
-      title: "Discount",
-      dataIndex: "discount",
-    },
+      title: "Status",
+      dataIndex: "status",
+      render: (text:any, record:any) => {
+        const inlineStyle = {
+          color: record.status === "close" ? "red" : "green", // Change "red" to your desired color
+        };
+        return <p style={inlineStyle}>{text}</p>
+    }},
     {
       title: "CreatedAt",
       dataIndex: "createdAt",
@@ -111,19 +96,18 @@ const ProductPage = () => {
       render: function (data: any) {
         return (
           <>
-            <Link href={`/admin/product/edit/${data?.id}`}>
+            <Link href={`/admin/branch/edit/${data?.id}`}>
               <Button
                 style={{
                   margin: "0px 5px",
                 }}
-                onClick={() => console.log(data)}
                 type="primary"
               >
                 <EditOutlined />
               </Button>
             </Link>
             <Button
-              onClick={() => deleteHandler(data?.id,data?.name)}
+              onClick={() => deleteHandler(data?.id,data?.username)}
               type="primary"
               danger
             >
@@ -136,13 +120,12 @@ const ProductPage = () => {
   ];
 
   const onPaginationChange = (page: number, pageSize: number) => {
-    console.log("Page:", page, "PageSize:", pageSize);
     setPage(page);
     setSize(pageSize);
   };
   const onTableChange = (pagination: any, filter: any, sorter: any) => {
     const { order, field } = sorter;
-    // console.log(order, field);
+
     setSortBy(field as string);
     setSortOrder(order === "ascend" ? "asc" : "desc");
   };
@@ -158,7 +141,8 @@ const ProductPage = () => {
       }}>
     
   
-        <ActionBar title="Product List">
+        <ActionBar title="Branch
+         List">
           <Input
             type="text"
             size="large"
@@ -171,7 +155,7 @@ const ProductPage = () => {
             }}
           />
           <div>
-            <Link href="http://localhost:3000/admin/add-product">
+            <Link href="http://localhost:3000/admin/creat-branch">
               <Button type="primary">Create</Button>
             </Link>
             {(!!sortBy || !!sortOrder || !!searchTerm) && (
@@ -189,7 +173,7 @@ const ProductPage = () => {
         <UMTable
           loading={isLoading}
           columns={columns}
-          dataSource={products}
+          dataSource={branchs}
           pageSize={size}
           totalPages={meta?.total}
           showSizeChanger={true}
@@ -201,4 +185,4 @@ const ProductPage = () => {
     );
   };
   
-  export default ProductPage;
+  export default BrancePage;

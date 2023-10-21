@@ -1,13 +1,13 @@
-export interface IMeta{
-    limit: number;
-    page: number;
-    total:number
+export interface IMeta {
+  limit: number;
+  page: number;
+  total: number;
 }
 
 export type ResponseSuccessType = {
-    data: any;
-    meta?:IMeta
-}
+  data: any;
+  meta?: IMeta;
+};
 
 export type IGenericErrorResponse = {
   statusCode: number;
@@ -27,17 +27,29 @@ export interface ICategory {
   __v: number;
 }
 
-
 export interface IProduct {
-  id:           String; 
-  name :        String;
-  price:        String;
-  flavor:       String;
+  id: String;
+  name: String;
+  price: String;
+  flavor: String;
   productImage: object;
-  discount :    String;
-  size :        String;
-  createdAt:  String;
-  updatedAt:  String;
-  categoryId: String
+  discount: String;
+  size: String;
+  createdAt: String;
+  updatedAt: String;
+  categoryId: String;
+  __v: number;
+}
+
+export interface IBranch {
+  id: String;
+  username: String;
+  password: String;
+  email: String;
+  role: String;
+  contactNo: String;
+  address: String;
+  createdAt: String;
+  updatedAt: String;
   __v: number;
 }

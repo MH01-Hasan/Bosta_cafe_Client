@@ -5,3 +5,10 @@
   margin: 0;
   font-family: 'Roboto Condensed', sans-serif;
 }
+
+.status-close {
+  color: red;
+}
+.status-active {
+  color: rgb(25, 185, 94);
+}

@@ -4,15 +4,18 @@ import Form from "@/components/ui/Forms/Form";
 import FormInput from "@/components/ui/Forms/FormInput";
 import { useAddCategoryMutation } from "@/redux/api/categoryApi";
 import { Button, Col, Row, message } from "antd";
+import { useRouter } from "next/navigation";
 
 const CreateCategory = () => {
   const [addCategory] = useAddCategoryMutation();
+  const router = useRouter();
 
   const onSubmit = async (data: any) => {
     message.loading("Creating.....");
     try {
       await addCategory(data);
       message.success("Category added successfully");
+      router.push("/admin/category");
     } catch (err: any) {
       console.error(err.message);
       message.error(err.message);

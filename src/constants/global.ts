@@ -30,6 +30,26 @@ export const sizeOptions = [
         value:"large"
     },
 ]
+export const roleOptions = [ 
+    {
+        label: "Admin",
+        value:"admin"
+    },
+    {
+        label: "Saler",
+        value:"saler"
+    },
+]
+export const StatusOptions = [ 
+    {
+        label: "Open",
+        value:"open"
+    },
+    {
+        label: "Close",
+        value:"close"
+    },
+]
 
 
 export const bloodGroupOptions = [
