@@ -1,4 +1,5 @@
 import { baseApi } from './api/baseApi';
+import { getTotals } from './api/cardSlics';
 import { reducer } from './rootReducer';
 import { configureStore } from '@reduxjs/toolkit'
 
@@ -8,7 +9,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat(baseApi.middleware),
 })
 
-
+store.dispatch(getTotals());
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>

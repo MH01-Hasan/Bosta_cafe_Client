@@ -1,3 +1,4 @@
+
 import { IMeta, IProduct } from "@/types";
 import { tagTypes } from "../tag-types";
 import { baseApi } from "./baseApi";
@@ -12,7 +13,7 @@ export const productApi = baseApi.injectEndpoints({
         method: "GET",
         params: arg,
       }),
-      transformResponse: (response:IProduct, meta: IMeta) => {
+      transformResponse: (response:IProduct[], meta: IMeta) => {
         return {
           products: response,
           meta,

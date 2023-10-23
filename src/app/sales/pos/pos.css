@@ -74,10 +74,55 @@
 .react-icon{
     margin-left: 21px;
 }
+.handelremovecart{
+    border: none;
+    color: #e51a1a;
+    font-size: 19px;
+}
+.centered-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+  
+
+.quantity{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.total-quantity{
+    margin: 0px 5px;
+}
+.in-batton{
+    border: none;
+    height: 27px;
+    padding: 2px 17px;
+    font-size: 18px;
+    background-color: snow;
+    color: green;
+}
 
 
 /* ////////////////////////////////// */
 
 .product_list{
     margin-left:15px
+}
+.product-info{
+    width: 122px;
+    height: 137px;
+    border: none;
+    border-radius: 5px;
+}
+
+.product{
+    background-color: whitesmoke;
+    border-radius: 5px;
+    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+    margin-top: 19px;
+    padding: 20px;
+    height: 100vh;
+   
+
 }
