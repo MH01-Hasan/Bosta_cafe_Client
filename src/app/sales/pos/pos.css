@@ -5,9 +5,6 @@
     height: 100vh;
 }
 
-
-
-
 .cart-item{
     background-color: whitesmoke;
     border-radius: 5px;
@@ -74,11 +71,7 @@
 .react-icon{
     margin-left: 21px;
 }
-.handelremovecart{
-    border: none;
-    color: #e51a1a;
-    font-size: 19px;
-}
+
 .centered-text {
     display: flex;
     justify-content: center;
@@ -107,7 +100,20 @@
 /* ////////////////////////////////// */
 
 .product_list{
-    margin-left:15px
+    margin-left:15px;
+    
+    
+}
+
+.product-head{
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.all-modal{
+    display: flex;
+    align-items: center;
 }
 .product-info{
     width: 122px;
@@ -116,13 +122,16 @@
     border-radius: 5px;
 }
 
-.product{
-    background-color: whitesmoke;
-    border-radius: 5px;
-    box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
-    margin-top: 19px;
-    padding: 20px;
-    height: 100vh;
-   
-
+.hold-table{
+    border: 1px solid #0000004d;
+    border-collapse: collapse;
+    width: 100%;
+}
+.hold-th{
+    border: 1px solid #0000004d;
+}
+.hold-td{
+    border: 1px solid #0000004d;
+    padding: 2px;
+    text-align: center;
 }
