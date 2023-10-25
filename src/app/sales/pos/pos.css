@@ -135,3 +135,12 @@
     padding: 2px;
     text-align: center;
 }
+
+.holadModal{
+    width: 335px!important
+}
+
+.hold-icon{
+    font-size: 81px;
+    width: 100%;
+}

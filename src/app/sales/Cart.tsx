@@ -1,3 +1,4 @@
+"use client";
 import { getUserInfo } from "@/services/auth.service";
 import React, { useEffect, useState } from "react";
 import { UserAddOutlined } from "@ant-design/icons";
@@ -17,6 +18,8 @@ import {
 import { Button, Input, Modal } from "antd";
 import { RiChatDeleteLine } from "react-icons/ri";
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
+import { FcHighPriority } from "react-icons/fc";
+
 import "../sales/pos/pos.css";
 
 const Cart = () => {
@@ -181,16 +184,44 @@ const Cart = () => {
               <IoHandLeftOutline className="react-icon" />
             </Button>
             <Modal
-              title="
-                    Hold"
+           className="holadModal"
+              title="Hold"
               visible={holdModalOpen}
               onOk={holdtoggleModal}
               onCancel={holdtoggleModal}
+              footer="hold"
+             
             >
-              <p>hello</p>
-              <p>hello</p>
-              <p>hello</p>
-              <p>hello</p>
+             <div  >
+             < FcHighPriority className="hold-icon"/>
+             <p style={{
+              textAlign: 'center',
+              fontSize: '18px',
+              marginBottom:'7px',
+             }}>Hold Invoice ? Same Reference will <br />replace the old list if exist!!</p>
+              <Input
+                type="text"
+                placeholder="Please Enter Reference Number!"
+                style={{
+                  width:"100%",
+                  height: "46px",
+                  borderRadius: "7px",
+                  color:'black',
+                  fontSize:'18px'
+                }}
+                onChange={(e) => {
+                
+                }}
+              />
+             <Button style={{
+              marginTop:'16px'
+             }} type="primary" size='large'>
+            
+            Yes,ok
+          </Button>
+             </div>
+              
+             
             </Modal>
 
             <Button

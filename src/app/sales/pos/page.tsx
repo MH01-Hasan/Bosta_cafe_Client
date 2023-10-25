@@ -9,8 +9,8 @@ import {
 } from "react-icons/ai";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/redux/api/cardSlics";
-import Cart from "../cart";
-// @tsignore
+import Cart  from "../Cart";
+
 const page = () => {
   //................................ get product code start................
   const query: Record<string, any> = {};
