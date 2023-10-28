@@ -1,16 +1,15 @@
 "use client";
-import { Button, Input, Col, Row, Modal, Space } from "antd";
+import { Button, Input, Col, Row, Modal, Space, Badge, Avatar } from "antd";
 import "./pos.css";
 import { useProductsQuery } from "@/redux/api/productApi";
-import {useState } from "react";
+import { useState, useEffect } from "react";
 import { useDebounced } from "@/redux/hooks";
-import {
-  AiOutlineBars,
-} from "react-icons/ai";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/redux/api/cardSlics";
-import Cart  from "../Cart";
-
+import { AiOutlineBars } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, loadHoldItem } from "@/redux/api/cardSlics";
+import Cart from "../Cart";
+import { DeleteHoldItem } from "@/redux/api/holdItemSlice";
+import { GrView } from "react-icons/gr";
 const page = () => {
   //................................ get product code start................
   const query: Record<string, any> = {};
@@ -46,14 +45,16 @@ const page = () => {
   };
 
   //................................ get product code End................
+
+  //----------------------------------------- get Catagoty -----------------
+
+  //----------------------------------------- get Catagoty -----------------
   const dispatch = useDispatch();
 
   const handeladdToCard = (product: any) => {
     dispatch(addToCart(product));
   };
-  
 
- 
   // hold list model ...................
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -61,7 +62,19 @@ const page = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  
+  // Hold Orders item.................................................
+
+  const hold = useSelector((state: any) => state.hold);
+  useEffect(() => {}, [hold?.holditems]);
+
+  const handelholButton = (product: any) => {
+    dispatch(loadHoldItem(product?.items));
+  };
+
+  const handelholdDeleteButton = (product: any) => {
+    dispatch(DeleteHoldItem(product));
+  };
+  // Hold Orders item.................................................
 
   return (
     <div className="cart-body">
@@ -69,7 +82,6 @@ const page = () => {
         {/* --------------cart Start------------------ */}
         <Col span={8}>
           <Cart></Cart>
-          
         </Col>
 
         {/* --------------cart End------------------ */}
@@ -92,17 +104,22 @@ const page = () => {
               />
               <div className="all-modal">
                 <div className="hold-model">
-                  <Space>
-                    <Button style={{
-                      backgroundColor:"#FF679B",
-                      color: "white",
-                      fontSize: "28px",
-                      width: "48px",
-                      height: "42px",
-                      border: "none",
-                    }} onClick={toggleModal}>
-                      <AiOutlineBars />
-                    </Button>
+                  <Space size="middle">
+                    <Badge count={hold?.holditems?.length}>
+                      <Button
+                        style={{
+                          backgroundColor: "#FF679B",
+                          color: "white",
+                          fontSize: "28px",
+                          width: "48px",
+                          height: "42px",
+                          border: "none",
+                        }}
+                        onClick={toggleModal}
+                      >
+                        <AiOutlineBars />
+                      </Button>
+                    </Badge>
                   </Space>
                   <Modal
                     title="Hold List"
@@ -118,26 +135,44 @@ const page = () => {
                         <th className="hold-th">Ref.ID</th>
                         <th className="hold-th">Action</th>
                       </tr>
-                      <tr>
-                        <td className="hold-td">560</td>
-                        <td className="hold-td">10/05/2023</td>
-                        <td className="hold-td">Ib600</td>
-                        <td className="hold-td">Germany</td>
-                      </tr>
+                      {hold?.holditems?.map((holditem: any, index: number) => (
+                        <tr key={index + 1}>
+                          <td className="hold-td">{index + 1}</td>
+                          <td className="hold-td">
+                            {new Date(holditem?.date).toLocaleDateString(
+                              undefined,
+                              { year: "numeric", month: "long", day: "numeric" }
+                            )}
+                          </td>
+                          <td className="hold-td">{holditem?.holdid}</td>
+                          <td className="hold-td">
+                            <button onClick={() => handelholButton(holditem)}>
+                              <GrView />
+                            </button>
+                            <button
+                              onClick={() => handelholdDeleteButton(holditem)}
+                            >
+                              delete{" "}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
                     </table>
                   </Modal>
                 </div>
               </div>
             </div>
 
-            <div style={{
+            <div
+              style={{
                 backgroundColor: "whitesmoke",
-                borderRadius:" 5px",
+                borderRadius: " 5px",
                 boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)",
-                marginTop: '19px',
-                padding: '20px',
-                height: '100vh',
-            }}>
+                marginTop: "19px",
+                padding: "20px",
+                height: "100vh",
+              }}
+            >
               <Row gutter={4}>
                 {products?.map((product) => (
                   <Col xs={12} sm={12} md={8} lg={4} xl={4}>
@@ -150,8 +185,7 @@ const page = () => {
                           width: "100%",
                           height: " 100%",
                         }}
-                        src={product?.productImage?.url}
-                        alt=""
+                        src={(product?.productImage as { url: string })?.url}
                       />
                       <p>{product?.name}</p>
                     </button>

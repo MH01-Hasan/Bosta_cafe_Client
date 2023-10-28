@@ -17,10 +17,10 @@ interface CartState {
   cartTotalAmount: number;
 }
 
-const storedCartData = typeof localStorage !== 'undefined' ? localStorage.getItem("cartItem") : null;
+const storedCartData = typeof localStorage !== 'undefined' ? localStorage.getItem("cartItem") : null
 
 const initialState: CartState = {
-  cartItem: storedCartData ? JSON.parse(storedCartData) : [],
+  cartItem: storedCartData?.length ? JSON.parse(storedCartData) : [],
   cartTotalQuantity: 0,
   cartTotalAmount: 0,
 };
@@ -86,6 +86,11 @@ const cartslice = createSlice({
       state.cartItem = nextCartItems;
       localStorage.setItem('cartItem', JSON.stringify(state.cartItem));
     },
+
+    loadHoldItem(state,action) {
+      state.cartItem =action.payload
+    },
+
   },
 });
 
@@ -96,6 +101,7 @@ export const {
   increaseToCart,
   clearCart,
   getTotals,
+  loadHoldItem,
 } = cartslice.actions;
 
 export default cartslice.reducer;

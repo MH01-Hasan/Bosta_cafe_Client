@@ -15,12 +15,13 @@ import {
   increaseToCart,
   removeFromCart,
 } from "@/redux/api/cardSlics";
-import { Button, Input, Modal } from "antd";
+import { Button, Input, Modal, message } from "antd";
 import { RiChatDeleteLine } from "react-icons/ri";
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 import { FcHighPriority } from "react-icons/fc";
 
 import "../sales/pos/pos.css";
+import { addToHold } from "@/redux/api/holdItemSlice";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -106,9 +107,9 @@ const Cart = () => {
             <Button
               onClick={() => handelremovecart(data)}
               style={{
-                border:"none",
-                color:"#e51a1a",
-                fontSize:"19px",
+                border: "none",
+                color: "#e51a1a",
+                fontSize: "19px",
               }}
             >
               <RiChatDeleteLine />
@@ -118,6 +119,59 @@ const Cart = () => {
       },
     },
   ];
+  interface CartItem {
+    id: string;
+    name: string;
+    price: string;
+    flavor: string;
+    discount: string;
+    size: string;
+    category: object;
+    cartQuantity: number;
+  }
+
+  const [holdid, setHoldId] = useState<string>("");
+
+  const handelHoldItems = () => {
+    // Display a loading message
+    message.loading("Creating.....");
+
+    // Check if holdid is empty
+    if (holdid === "") {
+      alert("Type Reference id");
+      return; // Exit the function if holdid is empty
+    }
+
+    // Generate a random id within a range
+    const min = 10;
+    const max = 99;
+    const randomId = Math.floor(Math.random() * (max - min + 1)) + min;
+
+    // Create the hold order object
+    const holdOrder = {
+      id: randomId,
+      holdid: holdid,
+      date: new Date(),
+      items: cart_Item, // Assuming cart_Item is defined elsewhere
+      holditems: [],
+    };
+
+    // Dispatch the hold order to your Redux store
+    dispatch(addToHold(holdOrder));
+
+    // Close the modal (assuming holdtoggleModal is a function that does this)
+    holdtoggleModal();
+
+    // Clear the holdid (assuming setHoldId is a function that does this)
+    setHoldId("");
+
+    // Trigger another function (handelcrealecart)
+    handelcrealecart();
+
+    // Display a success message
+    message.success("Hold order created successfully!");
+  };
+
   return (
     <>
       <div
@@ -184,44 +238,50 @@ const Cart = () => {
               <IoHandLeftOutline className="react-icon" />
             </Button>
             <Modal
-           className="holadModal"
+              className="holadModal"
               title="Hold"
               visible={holdModalOpen}
               onOk={holdtoggleModal}
               onCancel={holdtoggleModal}
               footer="hold"
-             
             >
-             <div  >
-             < FcHighPriority className="hold-icon"/>
-             <p style={{
-              textAlign: 'center',
-              fontSize: '18px',
-              marginBottom:'7px',
-             }}>Hold Invoice ? Same Reference will <br />replace the old list if exist!!</p>
-              <Input
-                type="text"
-                placeholder="Please Enter Reference Number!"
-                style={{
-                  width:"100%",
-                  height: "46px",
-                  borderRadius: "7px",
-                  color:'black',
-                  fontSize:'18px'
-                }}
-                onChange={(e) => {
-                
-                }}
-              />
-             <Button style={{
-              marginTop:'16px'
-             }} type="primary" size='large'>
-            
-            Yes,ok
-          </Button>
-             </div>
-              
-             
+              <div>
+                <FcHighPriority className="hold-icon" />
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontSize: "18px",
+                    marginBottom: "7px",
+                  }}
+                >
+                  Hold Invoice ? Same Reference will <br />
+                  replace the old list if exist!!
+                </p>
+                <Input
+                  type="text"
+                  placeholder="Please Enter Reference Number!"
+                  style={{
+                    width: "100%",
+                    height: "46px",
+                    borderRadius: "7px",
+                    color: "black",
+                    fontSize: "18px",
+                  }}
+                  onChange={(e) => {
+                    setHoldId(e.target.value);
+                  }}
+                />
+                <Button
+                  style={{
+                    marginTop: "16px",
+                  }}
+                  type="primary"
+                  size="large"
+                  onClick={() => handelHoldItems()}
+                >
+                  Yes,ok
+                </Button>
+              </div>
             </Modal>
 
             <Button
