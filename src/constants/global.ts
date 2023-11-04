@@ -30,6 +30,25 @@ export const sizeOptions = [
         value:"large"
     },
 ]
+export const paymentMethod = [
+    {
+        label: "Cash",
+        value:"cash"
+    },
+    {
+        label: "Card",
+        value:"card"
+    },
+    {
+        label: "Online Payment",
+        value:"online"
+    },
+    {
+        label: "Others",
+        value:"others"
+    },
+]
+
 export const roleOptions = [ 
     {
         label: "Admin",

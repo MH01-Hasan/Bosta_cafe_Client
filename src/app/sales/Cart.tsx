@@ -15,11 +15,10 @@ import {
   increaseToCart,
   removeFromCart,
 } from "@/redux/api/cardSlics";
-import { Button, Input, Modal, message } from "antd";
+import { Button, Col, Input, Modal, Row, Select, message } from "antd";
 import { RiChatDeleteLine } from "react-icons/ri";
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 import { FcHighPriority } from "react-icons/fc";
-
 import "../sales/pos/pos.css";
 import { addToHold } from "@/redux/api/holdItemSlice";
 
@@ -36,6 +35,7 @@ const Cart = () => {
   //................................ get Cart item code start................
 
   const cart = useSelector((state: any) => state.cart);
+  console.log("cart", cart);
   useEffect(() => {
     dispatch(getTotals());
   }, [cart, dispatch]);
@@ -119,17 +119,6 @@ const Cart = () => {
       },
     },
   ];
-  interface CartItem {
-    id: string;
-    name: string;
-    price: string;
-    flavor: string;
-    discount: string;
-    size: string;
-    category: object;
-    cartQuantity: number;
-  }
-
   const [holdid, setHoldId] = useState<string>("");
 
   const handelHoldItems = () => {
@@ -172,6 +161,49 @@ const Cart = () => {
     message.success("Hold order created successfully!");
   };
 
+  ///----------------------------- Pay Modal ...............................
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    console.log("Clicked cancel button");
+    setOpen(false);
+  };
+
+  // order submite from
+
+  const [receivedAmount, setReceivedAmount] = useState<number>(0);
+  const [changeReturn, setChangeReturn] = useState<number>(0);
+  console.log("changeReturn", changeReturn);
+  const [paymentMethod, setPaymentMethod] = useState<string>("");
+
+  const onreciveAmoutn = (e: any) => {
+    const Amount = Number(e.target.value);
+    setReceivedAmount(Amount);
+    if (Amount <= 0) {
+      setChangeReturn(0);
+    } else {
+      const payingAmount = Number(cart?.cartTotalAmount);
+      const changeReturn = (Amount - payingAmount).toFixed(2);
+      setChangeReturn(changeReturn as any);
+    }
+  };
+  const handleChange = (value: string) => {
+    setPaymentMethod(value);
+  };
+
   return (
     <>
       <div
@@ -193,7 +225,11 @@ const Cart = () => {
 
       <div className="cart-item">
         <div className="table">
-          <UMTable columns={columns} dataSource={cart_Item} />
+          <UMTable
+            columns={columns}
+            showPagination={false}
+            dataSource={cart_Item}
+          />
         </div>
 
         <div className="cart-button">
@@ -299,7 +335,9 @@ const Cart = () => {
             >
               Reset <ImSpinner11 className="react-icon" />
             </Button>
+            {/*------------------------------- pay modal -------------------------------*/}
             <Button
+              onClick={showModal}
               className="button-cart"
               style={{
                 backgroundColor: "#2FC989",
@@ -313,6 +351,121 @@ const Cart = () => {
               Pay
               <FaCcAmazonPay className="react-icon" />
             </Button>
+            <Modal
+              width={1000}
+              title="Ordes History"
+              open={open}
+              onOk={handleOk}
+              confirmLoading={confirmLoading}
+              onCancel={handleCancel}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div className="order-history">
+                  <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                    <Col
+                      className="gutter-row"
+                      span={12}
+                      style={{
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <label>Received Amount:</label> <br />
+                      <Input
+                        type="text"
+                        size="large"
+                        placeholder="Received Amount"
+                        onChange={(e) => {
+                          onreciveAmoutn(e);
+                        }}
+                      />
+                    </Col>
+                    {/* ---------------------------------- */}
+                    <Col
+                      className="gutter-row"
+                      span={12}
+                      style={{
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <label>Paying Amount:</label>
+                      <Input
+                        disabled
+                        value={cart?.cartTotalAmount.toFixed(2)}
+                        type="text"
+                        size="large"
+                      />
+                    </Col>
+
+                    <Col
+                      className="gutter-row"
+                      span={12}
+                      style={{
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <label>Change Return </label>
+                      <Input
+                        disabled
+                        value={changeReturn}
+                        type="text"
+                        size="large"
+                      />
+                    </Col>
+                    {/* ---------------------------------- */}
+                    <Col
+                      className="gutter-row"
+                      span={12}
+                      style={{
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <label>Payment Type:</label> <br />
+                      <Select
+                        size="large"
+                        placeholder="Payment Type"
+                        onChange={handleChange}
+                        options={[
+                          {
+                            label: "Cash",
+                            value: "cash",
+                          },
+                          {
+                            label: "Card",
+                            value: "card",
+                          },
+                          {
+                            label: "Online Payment",
+                            value: "online",
+                          },
+                          {
+                            label: "Others",
+                            value: "others",
+                          },
+                        ]}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+
+                <div className="Total-Products">
+                  <table className="hold-table">
+                    <tr>
+                      <th className="hold-th">Total Products</th>
+                      <th className="hold-th">{cart?.cartTotalQuantity}</th>
+                    </tr>
+                    <tr>
+                      <th className="hold-th">Total Amount</th>
+                      <th className="hold-th">{cart?.cartTotalAmount}</th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </Modal>
           </div>
         </div>
       </div>
