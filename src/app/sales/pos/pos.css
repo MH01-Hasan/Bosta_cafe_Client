@@ -146,6 +146,16 @@
     width: 100%;
 }
 
+.pay-th{
+    border: 1px solid #00000047;
+    height: 33px;
+    color: #000000f0;
+    font-weight: 400;
+    text-align: left;
+    padding: 0px 15px;
+}
+
+
 .Calclutor{
     position: absolute;
     top: 55px;

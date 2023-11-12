@@ -21,6 +21,7 @@ import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
 import { FcHighPriority } from "react-icons/fc";
 import "../sales/pos/pos.css";
 import { addToHold } from "@/redux/api/holdItemSlice";
+import { set } from "react-hook-form";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -35,7 +36,6 @@ const Cart = () => {
   //................................ get Cart item code start................
 
   const cart = useSelector((state: any) => state.cart);
-  console.log("cart", cart);
   useEffect(() => {
     dispatch(getTotals());
   }, [cart, dispatch]);
@@ -169,24 +169,29 @@ const Cart = () => {
     setOpen(true);
   };
 
-  const handleOk = () => {
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
-  };
-
+  
   const handleCancel = () => {
     console.log("Clicked cancel button");
     setOpen(false);
   };
 
-  // order submite from
+const [discount, setDiscount] = useState<number>(0);
+const [shipping, setShipping] = useState<number>(0);
+const [tax, setTax] = useState<number>(0);
 
-  const [receivedAmount, setReceivedAmount] = useState<number>(0);
+const handleDiscount = (e: any) => {
+  const discountValue = Number(e.target.value);
+  if (discountValue <= 0) {
+    setDiscount(0);
+  } else {
+    const totalBill = Number(cart?.cartTotalAmount);
+    const totalDiscount = totalBill * (discountValue / 100);
+    setDiscount(totalDiscount);
+  }
+};
+
+const [receivedAmount, setReceivedAmount] = useState<number>(0);
   const [changeReturn, setChangeReturn] = useState<number>(0);
-  console.log("changeReturn", changeReturn);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
 
   const onreciveAmoutn = (e: any) => {
@@ -202,6 +207,28 @@ const Cart = () => {
   };
   const handleChange = (value: string) => {
     setPaymentMethod(value);
+  };
+
+
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+    const orderdata = { 
+      cart: cart,
+      discount: discount,
+      shipping: shipping,
+      tax: tax,
+      grandTotal: cart?.cartTotalAmount - discount,
+      receivedAmount: receivedAmount,
+      changeReturn: changeReturn,
+      paymentMethod: paymentMethod,
+      username: username,
+    };
+    console.log("orderdata", orderdata);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
   };
 
   return (
@@ -235,15 +262,20 @@ const Cart = () => {
         <div className="cart-button">
           <div className="cart-calculate">
             <div className="input">
-              <Input className="input-field" placeholder="Tax" allowClear />
-              <Input
-                className="input-field"
-                placeholder="Discount"
-                allowClear
-              />
+              <Input className="input-field" placeholder="Tax" allowClear 
+             onChange={(e:any) => {
+              setTax(e.target.value);
+            }}/>
+             
               <Input
                 className="input-field"
                 placeholder="Shipping"
+                allowClear
+              />
+               <Input
+                className="input-field"
+                placeholder="Discount"
+               onChange={(e) => {handleDiscount(e)}}
                 allowClear
               />
             </div>
@@ -251,9 +283,9 @@ const Cart = () => {
             <div className="total">
               <h4>Total QTY :{cart?.cartTotalQuantity} </h4>
               <h4>Sub Total : {cart?.cartTotalAmount.toFixed(2)}(OMR)</h4>
-              <h4>Discount : 60</h4>
+              <h4>Discount : {discount.toFixed(2)}(OMR)</h4>
               <h4>Shipping : 560</h4>
-              <h3>Total : 12480 </h3>
+              <h3>Total : {cart?.cartTotalAmount - discount} </h3>
             </div>
           </div>
 
@@ -455,12 +487,29 @@ const Cart = () => {
                 <div className="Total-Products">
                   <table className="hold-table">
                     <tr>
-                      <th className="hold-th">Total Products</th>
-                      <th className="hold-th">{cart?.cartTotalQuantity}</th>
+                      <th className="pay-th">Total Products</th>
+                      <th className="pay-th">{cart?.cartTotalQuantity}</th>
                     </tr>
                     <tr>
-                      <th className="hold-th">Total Amount</th>
-                      <th className="hold-th">{cart?.cartTotalAmount}</th>
+                      <th className="pay-th">Total Amount</th>
+                      <th className="pay-th">{cart?.cartTotalAmount}</th>
+                    </tr>
+                    <tr>
+                      <th className="pay-th">Order Tax	</th>
+                      <th className="pay-th">$ 0.00 (0.00 %)</th>
+                    </tr>
+                    <tr>
+                      <th className="pay-th">Shipping</th>
+                      <th className="pay-th">$ 0.00</th>
+                    </tr>
+                    <tr>
+                      <th className="pay-th">Discount</th>
+                      <th className="pay-th">{discount}</th>
+                    </tr>
+                   
+                    <tr>
+                      <th className="pay-th">Grand Total	</th>
+                      <th className="pay-th">{cart?.cartTotalAmount - discount}</th>
                     </tr>
                   </table>
                 </div>
