@@ -22,6 +22,7 @@ import { FcHighPriority } from "react-icons/fc";
 import "../sales/pos/pos.css";
 import { addToHold } from "@/redux/api/holdItemSlice";
 import { set } from "react-hook-form";
+import { useAddOrdersMutation } from "@/redux/api/ordersApi";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const Cart = () => {
     setHoldModalOpen(!holdModalOpen);
   };
   //   get user
-  const { username, role } = getUserInfo() as any;
+  const { username, role,id } = getUserInfo() as any;
   //................................ get Cart item code start................
 
   const cart = useSelector((state: any) => state.cart);
@@ -200,7 +201,7 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
     if (Amount <= 0) {
       setChangeReturn(0);
     } else {
-      const payingAmount = Number(cart?.cartTotalAmount);
+      const payingAmount = Number((cart?.cartTotalAmount) - discount);
       const changeReturn = (Amount - payingAmount).toFixed(2);
       setChangeReturn(changeReturn as any);
     }
@@ -208,10 +209,10 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
   const handleChange = (value: string) => {
     setPaymentMethod(value);
   };
+//........................................................... ad order .............................
+  const [addOrders] =useAddOrdersMutation()
 
-
-
-  const handleOk = () => {
+  const handleOk = async () => {
     setConfirmLoading(true);
     const orderdata = { 
       cart: cart,
@@ -222,14 +223,24 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
       receivedAmount: receivedAmount,
       changeReturn: changeReturn,
       paymentMethod: paymentMethod,
-      username: username,
+      userId: id,
     };
-    console.log("orderdata", orderdata);
+
+    console.log(orderdata);
+try {
+  await addOrders(orderdata)
+  message.success("Order upload successfully!");
+}
+catch(error){
+  console.error("Error uploading image:", error);
+}
+ 
     setTimeout(() => {
       setOpen(false);
       setConfirmLoading(false);
     }, 2000);
   };
+//........................................................... ad order .............................
 
   return (
     <>
@@ -282,10 +293,11 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
 
             <div className="total">
               <h4>Total QTY :{cart?.cartTotalQuantity} </h4>
-              <h4>Sub Total : {cart?.cartTotalAmount.toFixed(2)}(OMR)</h4>
+              <h4>Total : {cart?.cartTotalAmount.toFixed(2)}(OMR)</h4>
               <h4>Discount : {discount.toFixed(2)}(OMR)</h4>
               <h4>Shipping : 560</h4>
-              <h3>Total : {cart?.cartTotalAmount - discount} </h3>
+              <h4>tax : 560</h4>
+              <h3>Grand Total : {cart?.cartTotalAmount - discount} </h3>
             </div>
           </div>
 
@@ -427,7 +439,7 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
                       <label>Paying Amount:</label>
                       <Input
                         disabled
-                        value={cart?.cartTotalAmount.toFixed(2)}
+                        value={cart?.cartTotalAmount - discount}
                         type="text"
                         size="large"
                       />
