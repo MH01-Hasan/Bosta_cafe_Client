@@ -55,8 +55,8 @@ export const roleOptions = [
         value:"admin"
     },
     {
-        label: "Saler",
-        value:"saler"
+        label: "Seller",
+        value:"seller"
     },
 ]
 export const StatusOptions = [ 

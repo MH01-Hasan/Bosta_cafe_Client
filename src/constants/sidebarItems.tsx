@@ -26,6 +26,25 @@ export const sidebarItems = (role: string) => {
       ],
     },
   ];
+
+
+  const OrderSidebarItems: MenuProps["items"] = [
+    {
+      label: "Orders",
+      key: "orders",
+      icon: <AppstoreOutlined />,
+      children: [
+        {
+          label: <Link href={`/${role}/orders`}>All Orders</Link>,
+          key: `/orders`,
+        },
+       
+      ],
+    },
+   
+  ];
+
+
   const adminSidebarItems: MenuProps["items"] = [
     ...defaultSidebarItems,
     {
@@ -77,6 +96,11 @@ export const sidebarItems = (role: string) => {
         },
       ],
     },
+
+    ...OrderSidebarItems
+
+
+   
   ];
 
 
@@ -84,27 +108,25 @@ export const sidebarItems = (role: string) => {
 
 
 
-  // const adminSidebarItems: MenuProps["items"] = [
-  //   ...defaultSidebarItems,
-  //   {
-  //     label: <Link href={`/${role}/product`}>Product</Link>,
-  //     icon: <TableOutlined />,
-  //     key: `/${role}/product`,
-  //   },
-  //   {
-  //     label: <Link href={`/${role}/add_product`}>Add Product</Link>,
-  //     icon: <ThunderboltOutlined />,
-  //     key: `/${role}/add_product`,
-  //   },
-  //   {
-  //     label: <Link href={`/${role}/add_product`}>Add Product</Link>,
-  //     icon: <ThunderboltOutlined />,
-  //     key: `/${role}/add_product`,
-  //   }
-  // ];
+  const SellerSidebarItems: MenuProps["items"] = [
+    ...defaultSidebarItems,
+    {
+      label: "Orders",
+      key: "orders",
+      icon: <AppstoreOutlined />,
+      children: [
+        {
+          label: <Link href={`/${role}/orders/`}>All Orders</Link>,
+          key: `/orders`,
+        },
+       
+      ],
+    },
+   
+  ];
 
   if (role === USER_ROLE.ADMIN) return adminSidebarItems;
-  // else if (role === USER_ROLE.ADMIN) return adminSidebarItems;
+  else if (role === USER_ROLE.SELLER) return SellerSidebarItems;
 
   else {
     return defaultSidebarItems;

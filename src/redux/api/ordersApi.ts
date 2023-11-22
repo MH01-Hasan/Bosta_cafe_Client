@@ -1,25 +1,45 @@
 
-import { IMeta, IProduct } from "@/types";
+import { IMeta } from "@/types";
 import { tagTypes } from "../tag-types";
 import { baseApi } from "./baseApi";
 
 const ORDERS_URL = "/orders";
 
+
+
 export const OrdersApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+     
     orders: build.query({
       query: (arg: Record<string, any>) => ({
-        url: ORDERS_URL,
+        url: `${ORDERS_URL}`,
         method: "GET",
         params: arg,
       }),
       transformResponse: (response:[], meta: IMeta) => {
         return {
-          products: response,
+          orders: response,
           meta,
         };
       },
       providesTags: [tagTypes.orders],
+    }),
+
+
+
+    shopOrders: build.query({
+      query: (arg: Record<string, any>) => ({
+        url: `${ORDERS_URL}/${arg.id}`,
+        method: "GET",
+        params: arg.query,
+      }),
+      transformResponse: (response:[], meta: IMeta) => {
+        return {
+          shopOrders: response,
+          meta,
+        };
+      },
+      providesTags: [tagTypes.shopOrders],
     }),
 
 
@@ -64,6 +84,7 @@ export const OrdersApi = baseApi.injectEndpoints({
 
 export const {
     useOrdersQuery,
+    useShopOrdersQuery,
     useAddOrdersMutation,
 //   useProductsQuery,
 //   useProductQuery,
