@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import ActionBar from "@/components/ui/ActionBar";
 import { useOrdersQuery, useShopOrdersQuery } from "@/redux/api/ordersApi";
 import { getUserInfo } from "@/services/auth.service";
+import { set } from "react-hook-form";
 
 
 
@@ -167,13 +168,11 @@ useEffect(() => {
   ];
 
   const onPaginationChange = (page: number, pageSize: number) => {
-    console.log("Page:", page, "PageSize:", pageSize);
     setPage(page);
     setSize(pageSize);
   };
   const onTableChange = (pagination: any, filter: any, sorter: any) => {
     const { order, field } = sorter;
-    // console.log(order, field);
     setSortBy(field as string);
     setSortOrder(order === "ascend" ? "asc" : "desc");
   };
@@ -184,6 +183,8 @@ useEffect(() => {
     setSearchTerm("");
     setStartDate("");
     setendDate("");
+    setDate1("");
+    setDate2("");
   };
 
   
@@ -211,7 +212,16 @@ useEffect(() => {
     <DatePicker onChange={onChange1} />
     <DatePicker onChange={onChange2} />
 
-    <Button onClick={handeldateFicker}> Submite</Button>
+    <Button onClick={handeldateFicker} style={{
+      backgroundColor:"#F009F1",
+      color: "white",
+      height: "36px",
+      width: "99px",
+      marginLeft: "15px",
+      letterSpacing: "1px",
+      fontSize: "18px"
+  }
+    }> Search</Button>
    
   </Space>
         
@@ -241,7 +251,7 @@ useEffect(() => {
       </ActionBar>
 
       <UMTable
-        loading={loading}
+        loading={role === "admin" ? ordersIsLoading : isLoading}
         columns={columns}
          dataSource={order}
         pageSize={size}

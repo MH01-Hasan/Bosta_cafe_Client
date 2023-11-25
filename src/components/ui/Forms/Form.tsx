@@ -23,6 +23,7 @@ const Form = ({
 
   if (!!defaultValues) formConfig["defaultValues"] = defaultValues;
   if (!!resolver) formConfig["resolver"] = resolver;
+  
   const methods = useForm<FormProps>(formConfig);
 
   const { handleSubmit, reset } = methods;

@@ -28,6 +28,7 @@ const Cart = () => {
   const dispatch = useDispatch();
   // hold model
   const [holdModalOpen, setHoldModalOpen] = useState(false);
+  const[ordersrID,setOrdersrID]=useState<string>("")
 
   const holdtoggleModal = () => {
     setHoldModalOpen(!holdModalOpen);
@@ -120,18 +121,11 @@ const Cart = () => {
       },
     },
   ];
+
+  // ------------------------------------------ -----Hold order---------------------------
   const [holdid, setHoldId] = useState<string>("");
 
   const handelHoldItems = () => {
-    // Display a loading message
-    message.loading("Creating.....");
-
-    // Check if holdid is empty
-    if (holdid === "") {
-      alert("Type Reference id");
-      return; // Exit the function if holdid is empty
-    }
-
     // Generate a random id within a range
     const min = 10;
     const max = 99;
@@ -142,31 +136,34 @@ const Cart = () => {
       id: randomId,
       holdid: holdid,
       date: new Date(),
-      items: cart_Item, // Assuming cart_Item is defined elsewhere
+      items: cart_Item, 
       holditems: [],
     };
 
     // Dispatch the hold order to your Redux store
-    dispatch(addToHold(holdOrder));
 
-    // Close the modal (assuming holdtoggleModal is a function that does this)
+    if (holdid === "") {
+      return message.error("Please enter a reference number!");
+    }
+    else{
+      dispatch(addToHold(holdOrder));
+      message.success("Hold order created successfully!");
+      setHoldId("");
+      handelcrealecart();
+
+    }
+
     holdtoggleModal();
-
-    // Clear the holdid (assuming setHoldId is a function that does this)
-    setHoldId("");
-
-    // Trigger another function (handelcrealecart)
-    handelcrealecart();
-
-    // Display a success message
-    message.success("Hold order created successfully!");
   };
+  // ------------------------------------------ -----Hold order---------------------------
 
   ///----------------------------- Pay Modal ...............................
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-
   const showModal = () => {
+    const orderId = Math.floor(Math.random() * 10000);
+    console.log("BS-",orderId)
+    setOrdersrID(`BS-${orderId}`)
     setOpen(true);
   };
 
@@ -212,9 +209,22 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
 //........................................................... ad order .............................
   const [addOrders] =useAddOrdersMutation()
 
+
+
+
   const handleOk = async () => {
-    setConfirmLoading(true);
+    if(receivedAmount === 0){
+      return message.error("Please enter a received amount!");
+    }
+    else if(paymentMethod === ""){
+      return message.error("Please select a payment method!");
+    }
+
+   
+
+
     const orderdata = { 
+      orderId: ordersrID,
       cart: cart,
       discount: discount,
       shipping: shipping,
@@ -226,20 +236,23 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
       userId: id,
     };
 
-    console.log(orderdata);
-try {
-  await addOrders(orderdata)
-  message.success("Order upload successfully!");
-}
-catch(error){
-  console.error("Error uploading image:", error);
-}
- 
-    setTimeout(() => {
-      setOpen(false);
+    try {
+      setConfirmLoading(true);
+      await addOrders(orderdata);
+      message.success("Order uploaded successfully!");
+      clearCart(); 
+    } catch (error) {
+      message.error("Failed to upload order. Please try again.");
+      console.error("Error uploading order:", error);
+     
+    } finally {
       setConfirmLoading(false);
-    }, 2000);
-  };
+      setTimeout(() => {
+        setOpen(false);
+      }, 1000);
+    }
+  }
+
 //........................................................... ad order .............................
 
   return (
@@ -304,6 +317,7 @@ catch(error){
           <div className="action-button">
             <Button
               onClick={holdtoggleModal}
+              disabled={cart?.cartTotalAmount === 0}
               className="button-cart"
               size="large"
               style={{
@@ -358,6 +372,7 @@ catch(error){
                   type="primary"
                   size="large"
                   onClick={() => handelHoldItems()}
+                  
                 >
                   Yes,ok
                 </Button>
@@ -382,6 +397,7 @@ catch(error){
             {/*------------------------------- pay modal -------------------------------*/}
             <Button
               onClick={showModal}
+              disabled={cart?.cartTotalAmount === 0}
               className="button-cart"
               style={{
                 backgroundColor: "#2FC989",

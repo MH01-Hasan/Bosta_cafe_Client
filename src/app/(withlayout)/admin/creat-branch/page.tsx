@@ -6,6 +6,8 @@ import FormSelectField from "@/components/ui/Forms/FormSelectField";
 import UMBreadCrumb from "@/components/ui/UMBreadCrumb";
 import { StatusOptions, roleOptions } from "@/constants/global";
 import { useCreatBranchMutation } from "@/redux/api/branchApi";
+import { creatBranchSchima } from "@/schemas/creatBranchSchima";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Col, Row, message } from "antd";
 import { useRouter } from "next/navigation";
 
@@ -49,7 +51,7 @@ const AddProductPage = () => {
       <div style={{
         margin:'20px'
       }}>
-        <Form submitHandler={onSubmit}>
+        <Form submitHandler={onSubmit} resolver={yupResolver(creatBranchSchima)}>
           <div
             style={{
               border: "1px solid #d9d9d9",

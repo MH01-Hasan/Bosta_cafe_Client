@@ -12,6 +12,8 @@ import { ICategory } from "@/types";
 import { Button, Col, Row, message } from "antd";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { addProductSchema } from "@/schemas/addProductSchema";
 
 
 const AddProductPage = () => {
@@ -104,7 +106,7 @@ const AddProductPage = () => {
       <div style={{
         margin:'20px'
       }}>
-        <Form submitHandler={onSubmit}>
+        <Form submitHandler={onSubmit} resolver={yupResolver(addProductSchema)}>
           <div
             style={{
               border: "1px solid #d9d9d9",

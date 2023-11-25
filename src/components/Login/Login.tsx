@@ -1,5 +1,5 @@
 "use client";
-import { Button, Col, Input, Row } from "antd";
+import { Button, Col, Input, Row, message } from "antd";
 import loginImage from '../../assets/Tablet login-amico.svg'
 import Image from "next/image";
 import { SubmitHandler } from "react-hook-form";
@@ -8,6 +8,8 @@ import FormInput from "@/components/ui/Forms/FormInput";
 import { useUserLoginMutation } from "@/redux/api/authApi";
 import { useRouter } from "next/navigation";
 import { storeUserInfo } from "@/services/auth.service";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema } from "@/schemas/login";
 
 type FormValues = {
   username: string;
@@ -20,10 +22,11 @@ const LoginPage = () => {
 
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-    try {
+       try {
       const res = await userLogin({ ...data }).unwrap();
       if (res?.accessToken) {
         router.push("/profile");
+        message.success("User logged in successfully!");
       }
       storeUserInfo({ accessToken: res?.accessToken });
     } catch (err: any) {
@@ -50,7 +53,7 @@ const LoginPage = () => {
           First login your account
         </h1>
         <div>
-          <Form submitHandler={onSubmit}>
+          <Form submitHandler={onSubmit} resolver={yupResolver(loginSchema)}>
             <div>
               <FormInput name="username" type="text" size="large" label="User Id" />
             </div>
