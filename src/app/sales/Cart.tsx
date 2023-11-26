@@ -28,13 +28,13 @@ const Cart = () => {
   const dispatch = useDispatch();
   // hold model
   const [holdModalOpen, setHoldModalOpen] = useState(false);
-  const[ordersrID,setOrdersrID]=useState<string>("")
+  const [ordersrID, setOrdersrID] = useState<string>("");
 
   const holdtoggleModal = () => {
     setHoldModalOpen(!holdModalOpen);
   };
   //   get user
-  const { username, role,id } = getUserInfo() as any;
+  const { username, role, id } = getUserInfo() as any;
   //................................ get Cart item code start................
 
   const cart = useSelector((state: any) => state.cart);
@@ -136,7 +136,7 @@ const Cart = () => {
       id: randomId,
       holdid: holdid,
       date: new Date(),
-      items: cart_Item, 
+      items: cart_Item,
       holditems: [],
     };
 
@@ -144,51 +144,46 @@ const Cart = () => {
 
     if (holdid === "") {
       return message.error("Please enter a reference number!");
-    }
-    else{
+    } else {
       dispatch(addToHold(holdOrder));
       message.success("Hold order created successfully!");
       setHoldId("");
       handelcrealecart();
-
     }
 
     holdtoggleModal();
   };
-  // ------------------------------------------ -----Hold order---------------------------
+  // ------------------------------------------ -----Hold order End---------------------------
 
   ///----------------------------- Pay Modal ...............................
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const showModal = () => {
     const orderId = Math.floor(Math.random() * 10000);
-    console.log("BS-",orderId)
-    setOrdersrID(`BS-${orderId}`)
+    console.log("BS-", orderId);
+    setOrdersrID(`BS-${orderId}`);
     setOpen(true);
   };
 
-  
   const handleCancel = () => {
     console.log("Clicked cancel button");
     setOpen(false);
   };
 
-const [discount, setDiscount] = useState<number>(0);
-const [shipping, setShipping] = useState<number>(0);
-const [tax, setTax] = useState<number>(0);
+  const [discount, setDiscount] = useState<number>(0);
 
-const handleDiscount = (e: any) => {
-  const discountValue = Number(e.target.value);
-  if (discountValue <= 0) {
-    setDiscount(0);
-  } else {
-    const totalBill = Number(cart?.cartTotalAmount);
-    const totalDiscount = totalBill * (discountValue / 100);
-    setDiscount(totalDiscount);
-  }
-};
+  const handleDiscount = (e: any) => {
+    const discountValue = Number(e.target.value);
+    if (discountValue <= 0) {
+      setDiscount(0);
+    } else {
+      const totalBill = Number(cart?.cartTotalAmount);
+      const totalDiscount = totalBill * (discountValue / 100);
+      setDiscount(totalDiscount);
+    }
+  };
 
-const [receivedAmount, setReceivedAmount] = useState<number>(0);
+  const [receivedAmount, setReceivedAmount] = useState<number>(0);
   const [changeReturn, setChangeReturn] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
 
@@ -198,7 +193,7 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
     if (Amount <= 0) {
       setChangeReturn(0);
     } else {
-      const payingAmount = Number((cart?.cartTotalAmount) - discount);
+      const payingAmount = Number(cart?.cartTotalAmount - discount);
       const changeReturn = (Amount - payingAmount).toFixed(2);
       setChangeReturn(changeReturn as any);
     }
@@ -206,29 +201,20 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
   const handleChange = (value: string) => {
     setPaymentMethod(value);
   };
-//........................................................... ad order .............................
-  const [addOrders] =useAddOrdersMutation()
-
-
-
+  //........................................................... ad order .............................
+  const [addOrders] = useAddOrdersMutation();
 
   const handleOk = async () => {
-    if(receivedAmount === 0){
+    if (receivedAmount === 0) {
       return message.error("Please enter a received amount!");
-    }
-    else if(paymentMethod === ""){
+    } else if (paymentMethod === "") {
       return message.error("Please select a payment method!");
     }
 
-   
-
-
-    const orderdata = { 
+    const orderdata = {
       orderId: ordersrID,
       cart: cart,
       discount: discount,
-      shipping: shipping,
-      tax: tax,
       grandTotal: cart?.cartTotalAmount - discount,
       receivedAmount: receivedAmount,
       changeReturn: changeReturn,
@@ -240,20 +226,19 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
       setConfirmLoading(true);
       await addOrders(orderdata);
       message.success("Order uploaded successfully!");
-      clearCart(); 
+      clearCart();
     } catch (error) {
       message.error("Failed to upload order. Please try again.");
       console.error("Error uploading order:", error);
-     
     } finally {
       setConfirmLoading(false);
       setTimeout(() => {
         setOpen(false);
       }, 1000);
     }
-  }
+  };
 
-//........................................................... ad order .............................
+  //........................................................... ad order .............................
 
   return (
     <>
@@ -286,20 +271,12 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
         <div className="cart-button">
           <div className="cart-calculate">
             <div className="input">
-              <Input className="input-field" placeholder="Tax" allowClear 
-             onChange={(e:any) => {
-              setTax(e.target.value);
-            }}/>
-             
               <Input
                 className="input-field"
-                placeholder="Shipping"
-                allowClear
-              />
-               <Input
-                className="input-field"
                 placeholder="Discount"
-               onChange={(e) => {handleDiscount(e)}}
+                onChange={(e) => {
+                  handleDiscount(e);
+                }}
                 allowClear
               />
             </div>
@@ -308,8 +285,6 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
               <h4>Total QTY :{cart?.cartTotalQuantity} </h4>
               <h4>Total : {cart?.cartTotalAmount.toFixed(2)}(OMR)</h4>
               <h4>Discount : {discount.toFixed(2)}(OMR)</h4>
-              <h4>Shipping : 560</h4>
-              <h4>tax : 560</h4>
               <h3>Grand Total : {cart?.cartTotalAmount - discount} </h3>
             </div>
           </div>
@@ -372,7 +347,6 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
                   type="primary"
                   size="large"
                   onClick={() => handelHoldItems()}
-                  
                 >
                   Yes,ok
                 </Button>
@@ -522,22 +496,17 @@ const [receivedAmount, setReceivedAmount] = useState<number>(0);
                       <th className="pay-th">Total Amount</th>
                       <th className="pay-th">{cart?.cartTotalAmount}</th>
                     </tr>
-                    <tr>
-                      <th className="pay-th">Order Tax	</th>
-                      <th className="pay-th">$ 0.00 (0.00 %)</th>
-                    </tr>
-                    <tr>
-                      <th className="pay-th">Shipping</th>
-                      <th className="pay-th">$ 0.00</th>
-                    </tr>
+                  
                     <tr>
                       <th className="pay-th">Discount</th>
                       <th className="pay-th">{discount}</th>
                     </tr>
-                   
+
                     <tr>
-                      <th className="pay-th">Grand Total	</th>
-                      <th className="pay-th">{cart?.cartTotalAmount - discount}</th>
+                      <th className="pay-th">Grand Total </th>
+                      <th className="pay-th">
+                        {cart?.cartTotalAmount - discount}
+                      </th>
                     </tr>
                   </table>
                 </div>
