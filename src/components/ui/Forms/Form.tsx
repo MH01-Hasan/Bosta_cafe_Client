@@ -37,7 +37,9 @@ const Form = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>{children}</form>
+      <form style={{
+        width: "100%",
+      }} onSubmit={handleSubmit(onSubmit)}>{children}</form>
     </FormProvider>
   );
 };

@@ -42,6 +42,10 @@ const UMTable = ({
       dataSource={dataSource}
       pagination={paginationConfig}
       onChange={onTableChange}
+      style={{
+        width: "100% !important",
+        overflowX: "auto",
+      }}
     />
   );
 };

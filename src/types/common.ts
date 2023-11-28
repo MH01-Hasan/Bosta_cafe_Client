@@ -43,12 +43,12 @@ export interface IProduct {
 
 export interface IBranch {
   id: String;
-  username: String;
-  password: String;
-  email: String;
-  role: String;
-  contactNo: String;
   address: String;
+  contactNo:String;
+  email: String;
+  password: String;
+  role: String;
+  username: String;
   createdAt: String;
   updatedAt: String;
   __v: number;

@@ -13,6 +13,7 @@ type ActionBarProps = {
             justifyContent: "space-between",
             alignItems: "center",
             margin: "10px 0px",
+            
           }}
         >
           {children}

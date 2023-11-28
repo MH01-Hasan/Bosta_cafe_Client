@@ -1,17 +1,7 @@
 "use client";
 import { DeleteOutlined, ReloadOutlined } from "@ant-design/icons";
 import UMTable from "@/components/ui/UMTable";
-import {
-  Button,
-  Col,
-  DatePicker,
-  DatePickerProps,
-  Input,
-  Row,
-  Space,
-  Spin,
-  message,
-} from "antd";
+import { Button, Col, Input, Row } from "antd";
 import { useState, useEffect, use } from "react";
 import { useDebounced } from "@/redux/hooks";
 import dayjs from "dayjs";
@@ -19,33 +9,27 @@ import ActionBar from "@/components/ui/ActionBar";
 import { useOrdersQuery, useShopOrdersQuery } from "@/redux/api/ordersApi";
 import { getUserInfo } from "@/services/auth.service";
 import { useBranchsQuery } from "@/redux/api/branchApi";
-import { IBranch } from "@/types";
 import FormSelectField from "../ui/Forms/FormSelectField";
-import { all } from "axios";
 import Form from "../ui/Forms/Form";
 import FormDatePicker from "../ui/Forms/FormDatePicker";
+import './Order.css'
 
 const Order = () => {
+  const date = new Date();
+
   const query: Record<string, any> = {};
   const [page, setPage] = useState<number>(1);
-  const [size, setSize] = useState<number>(5);
+  const [size, setSize] = useState<number>(10);
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const [userId, setuserId] = useState<string | null>(null);
+  const [userId, setuserId] = useState<string>("");
 
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setendDate] = useState<string>("");
-
+  const [startDate, setStartDate] = useState<string>(`${date}`);
+  const [endDate, setendDate] = useState<string>(`${date}`);
 
   const [order, setOrder] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // let date = new Date();
-  // let formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-
-
 
   query["limit"] = size;
   query["page"] = page;
@@ -55,23 +39,24 @@ const Order = () => {
   query["startDate"] = startDate;
   query["endDate"] = endDate;
   query["userId"] = userId;
-  console.log(query);
+
+  console.log("query", query);
+  /// ------------------------------------------------- Get all Branch----------------
   const { data: branch, isLoading: branlodding } = useBranchsQuery({
     limit: 10,
     page: 1,
   });
+  const allbranch: any = branch?.branchs;
+  const allshop = allbranch?.filter((branch: any) => branch?.role === "seller");
+  const allbranchOptions = allshop?.map((branch: any) => {
+    return {
+      label: branch?.username,
+      value: branch?.id,
+    };
+  });
 
-  const allbranch: IBranch[] = branch?.branchs || [];
+  // ------------------------------------------------- Get all Branch End----------------
 
-  const allbranchOptions =
-    allbranch &&
-    allbranch?.map((branch) => {
-      return {
-        label: branch?.username,
-        value: branch?.id,
-      };
-    });
- 
   const debouncedTerm = useDebounced({
     searchQuery: searchTerm,
     delay: 600,
@@ -83,6 +68,7 @@ const Order = () => {
 
   const { role, id } = getUserInfo() as any;
 
+  //------------------------------------------------- Get all Order----------------
   const { data, isLoading: ordersIsLoading } = useOrdersQuery({ ...query });
   const orders = data?.orders;
   const meta = data?.meta;
@@ -103,6 +89,13 @@ const Order = () => {
   }, [role, orders, shoporders]);
 
   const columns = [
+    {
+      title: "Sl.No",
+      dataIndex: "Sl.No",
+      render: (text: any, record: any, index: number) => {
+        return <>{index + 1}</>;
+      },
+    },
     {
       title: "OrderID",
       dataIndex: "orderId",
@@ -197,131 +190,102 @@ const Order = () => {
     setSortBy("");
     setSortOrder("");
     setSearchTerm("");
-    setStartDate("");
-    setendDate("");
-    
   };
 
-  // const onChange1: DatePickerProps["onChange"] = (date, dateString) => {
-  //   setDate1(`${dateString}T00:00:00Z`);
-  // };
-
-  // const onChange2: DatePickerProps["onChange"] = (date, dateString) => {
-  //   setDate2(`${dateString}T23:59:59Z`);
-  // };
-
   const onSubmit = async (data: any) => {
-    console.log(data);
-    setuserId(data?.userId);
-    setStartDate(data?.startDate);
-    setendDate(data?.endDate);
-    
+    if (role === "admin") {
+      setuserId(data?.userId);
+      setStartDate(data?.startDate);
+      setendDate(data?.endDate);
+    } else if (role === "seller") {
+      setStartDate(data?.startDate);
+      setendDate(data?.endDate);
+    }
   };
 
   return (
     <div
       style={{
-        margin: "60px 50px",
+        margin: "15px 20px",
       }}
     >
-      <ActionBar title="Orders List">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Form submitHandler={onSubmit}>
-            <Row
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              gutter={{ xs: 24, xl: 6, lg: 8, md: 24 }}
-            >
-              <Col span={6} style={{ margin: "10px 0" }}>
-                <div style={{ margin: "10px 0px" }}>
-                  <FormDatePicker
-                    name="startDate"
-                    label="Start Date"
-                    size="large"
-                  />
-                </div>
-              </Col>
-              <Col span={6} style={{ margin: "10px 0" }}>
-                <div style={{ margin: "10px 0px" }}>
-                  <FormDatePicker
-                    name="endDate"
-                    label="End Date"
-                    size="large"
-                  />
-                </div>
-              </Col>
+       <ActionBar title="Orders List"></ActionBar>
 
-              <Col span={6} style={{ margin: "10px 0" }}>
-                <div style={{ margin: "10px 0px" }}>
-                  <FormSelectField
-                    size="large"
-                    name="userId"
-                    options={allbranchOptions}
-                    label="Branch"
-                    placeholder="Select"
-                  />
-                </div>
-              </Col>
-              <Col span={6} style={{ margin: "10px 0" }}>
-                <div style={{ margin: "10px 0px" }}>
-                  <Button
-                    style={{
-                      backgroundColor: "#F009F1",
-                      color: "white",
-                      height: "41px",
-                      width: "112px",
-                      marginTop: "15px",
-                      letterSpacing: "1px",
-                      fontSize: "18px",
-                    }}
-                    htmlType="submit"
-                  >
-                    Search
-                  </Button>
-                </div>
-              </Col>
-            </Row>
-          </Form>
-        </div>
-        <div>
-          <Input
-            type="text"
-            size="large"
-            placeholder="Search..."
-            style={{
-              width: '470px',
-              height: '44px'
-            }}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-            }}
-          />
-        </div>
-        <div>
-          {(!!sortBy ||
-            !!sortOrder ||
-            !!searchTerm ||
-            !!startDate ||
-            !!endDate) && (
-            <Button
-              onClick={resetFilters}
-              type="primary"
-              style={{ margin: "0px 5px" }}
+
+       <div className="order-body">
+       <div className="order_header">
+            <Form submitHandler={onSubmit}
+          
             >
-              <ReloadOutlined />
-            </Button>
-          )}
+              <div className={role==='admin'?'search-field1':'search-field'} >
+                <div>
+                  
+                    <FormDatePicker
+                      name="startDate"
+                      label="Start Date"
+                      size="large"
+                    />
+                  
+                </div>
+                <div className="date-picker">
+                    <FormDatePicker
+                      name="endDate"
+                      label="End Date"
+                      size="large"
+                    />
+              
+                </div>
+                {role === "admin" && (
+                  <div className="secleteduser">
+                   
+                      <FormSelectField
+                        size="large"
+                        name="userId"
+                        options={allbranchOptions}
+                        label="Branch"
+                        placeholder="Select"
+                      />
+                  
+                  </div>
+                )}
+                <div>
+                
+                    <Button
+                    className="search-btn"
+                      htmlType="submit"
+                    >
+                      Search
+                    </Button>
+                 
+                </div>
+              </div>
+            </Form>
+        
+
+
+
+          <div className={role==='admin'?'seach-input1':'seach-input'}>
+            <Input
+              type="text"
+              size="large"
+              placeholder="Search..."
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+            />
+            <div>
+              {(!!sortBy || !!sortOrder || !!searchTerm) && (
+                <Button
+                  onClick={resetFilters}
+                  type="primary"
+                  style={{ margin: "0px 5px" }}
+                >
+                  <ReloadOutlined />
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
-      </ActionBar>
 
       <UMTable
         loading={role === "admin" ? ordersIsLoading : isLoading}
@@ -334,6 +298,10 @@ const Order = () => {
         onTableChange={onTableChange}
         showPagination={true}
       />
+       </div>
+
+     
+      
     </div>
   );
 };
