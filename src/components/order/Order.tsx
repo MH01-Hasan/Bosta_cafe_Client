@@ -13,23 +13,26 @@ import FormSelectField from "../ui/Forms/FormSelectField";
 import Form from "../ui/Forms/Form";
 import FormDatePicker from "../ui/Forms/FormDatePicker";
 import './Order.css'
+import { useDispatch, useSelector } from "react-redux";
+import { setEndDate, setStartDate, setUserId } from "@/redux/api/dateSlics";
 
 const Order = () => {
-  const date = new Date();
 
-  const query: Record<string, any> = {};
+  const query: any= {};
   const [page, setPage] = useState<number>(1);
-  const [size, setSize] = useState<number>(10);
+  const [size, setSize] = useState<number>(20);
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const [userId, setuserId] = useState<string>("");
-
-  const [startDate, setStartDate] = useState<string>(`${date}`);
-  const [endDate, setendDate] = useState<string>(`${date}`);
-
   const [order, setOrder] = useState<any[]>([]);
+
+  // -----------------------------date-------------------------------------------
+  const dispatch = useDispatch();
+  const date = useSelector((state:any) => state?.date);
+  console.log(date)
+  const startDate = date?.startDate;
+  const endDate = date?.endDate;
+  const userId = date?.userId;
 
   query["limit"] = size;
   query["page"] = page;
@@ -40,7 +43,7 @@ const Order = () => {
   query["endDate"] = endDate;
   query["userId"] = userId;
 
-  console.log("query", query);
+console.log(query)
   /// ------------------------------------------------- Get all Branch----------------
   const { data: branch, isLoading: branlodding } = useBranchsQuery({
     limit: 10,
@@ -48,6 +51,7 @@ const Order = () => {
   });
   const allbranch: any = branch?.branchs;
   const allshop = allbranch?.filter((branch: any) => branch?.role === "seller");
+  allshop?.unshift({ id: "", username: "All" });
   const allbranchOptions = allshop?.map((branch: any) => {
     return {
       label: branch?.username,
@@ -86,7 +90,7 @@ const Order = () => {
     } else if (role === "seller") {
       setOrder(shoporders || []);
     }
-  }, [role, orders, shoporders]);
+  }, [role, orders, shoporders,]);
 
   const columns = [
     {
@@ -186,22 +190,27 @@ const Order = () => {
     setSortOrder(order === "ascend" ? "asc" : "desc");
   };
 
+
   const resetFilters = () => {
     setSortBy("");
     setSortOrder("");
     setSearchTerm("");
   };
-
+  
   const onSubmit = async (data: any) => {
-    if (role === "admin") {
-      setuserId(data?.userId);
-      setStartDate(data?.startDate);
-      setendDate(data?.endDate);
-    } else if (role === "seller") {
-      setStartDate(data?.startDate);
-      setendDate(data?.endDate);
+    if (data?.startDate !== undefined) {
+      dispatch(setStartDate(data?.startDate));
+    } else if (data?.endDate !== undefined) {
+      dispatch(setEndDate(data?.endDate));
     }
+    
+    if (role ==="admin" && data?.userId !== undefined) {
+      dispatch(setUserId(data?.userId));
+     
+    } 
   };
+ 
+
 
   return (
     <div
