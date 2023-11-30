@@ -52,14 +52,13 @@ export const OrdersApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.orders],
     }),
 
-    // get single department by id
-    // product: build.query({
-    //   query: (id) => ({
-    //     url: `${ORDERS_URL}/${id}`,
-    //     method: "GET",
-    //   }),
-    //   providesTags: [tagTypes.product],
-    // }),
+    order: build.query({
+      query: (id) => ({
+        url: `${ORDERS_URL}/order/${id}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.order],
+    }),
 
     // update single department by id
     // updateProduct: build.mutation({
@@ -86,6 +85,7 @@ export const {
     useOrdersQuery,
     useShopOrdersQuery,
     useAddOrdersMutation,
+    useOrderQuery
 //   useProductsQuery,
 //   useProductQuery,
 //   useDeleteProductMutation,

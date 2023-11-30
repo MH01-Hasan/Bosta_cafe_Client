@@ -48,7 +48,6 @@ const holdItemSlice = createSlice({
     },
 
     DeleteHoldItem(state, action: PayloadAction<HoldState>) {
-      console.log(action.payload, "this is ");
       const nextCartItems = state.holditems.filter(
         (cartItem) => cartItem.id !== action.payload.id
       );

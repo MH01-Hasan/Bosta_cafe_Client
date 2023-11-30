@@ -9,7 +9,6 @@ import { Button } from "antd";
 const ResetPassPage = () => {
   const onSubmit = async (data: any) => {
     try {
-      console.log(data);
     } catch (error) {
       console.error(error);
     }

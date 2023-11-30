@@ -12,6 +12,7 @@ const Header = () => {
   const logOut = () => {
     removeUserInfo(authKey);
     router.push("/login");
+    window.location.reload();
   };
 
   const items: MenuProps["items"] = [

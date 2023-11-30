@@ -26,7 +26,6 @@ import { useAddOrdersMutation } from "@/redux/api/ordersApi";
 
 const Cart = () => {
   const dispatch = useDispatch();
-  // hold model
   const [holdModalOpen, setHoldModalOpen] = useState(false);
   const [ordersrID, setOrdersrID] = useState<string>("");
 
@@ -153,20 +152,18 @@ const Cart = () => {
 
     holdtoggleModal();
   };
-  // ------------------------------------------ -----Hold order End---------------------------
+  // ------------------------------------------ -----Hold order End ---------------------------
 
-  ///----------------------------- Pay Modal ...............................
+  ///----------------------------- Pay Modal Start ...............................
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const showModal = () => {
     const orderId = Math.floor(Math.random() * 10000);
-    console.log("BS-", orderId);
     setOrdersrID(`BS-${orderId}`);
     setOpen(true);
   };
 
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
 
@@ -226,7 +223,11 @@ const Cart = () => {
       setConfirmLoading(true);
       await addOrders(orderdata);
       message.success("Order uploaded successfully!");
-      clearCart();
+      dispatch(clearCart());
+      setReceivedAmount(0);
+      setChangeReturn(0);
+      setPaymentMethod("");
+
     } catch (error) {
       message.error("Failed to upload order. Please try again.");
       console.error("Error uploading order:", error);

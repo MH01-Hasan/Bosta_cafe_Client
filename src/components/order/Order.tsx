@@ -1,12 +1,12 @@
 "use client";
 import { DeleteOutlined, ReloadOutlined } from "@ant-design/icons";
 import UMTable from "@/components/ui/UMTable";
-import { Button, Col, Input, Row } from "antd";
-import { useState, useEffect, use } from "react";
+import { Button,  Input,  } from "antd";
+import { useState, useEffect } from "react";
 import { useDebounced } from "@/redux/hooks";
 import dayjs from "dayjs";
 import ActionBar from "@/components/ui/ActionBar";
-import { useOrdersQuery, useShopOrdersQuery } from "@/redux/api/ordersApi";
+import { useOrderQuery, useOrdersQuery, useShopOrdersQuery } from "@/redux/api/ordersApi";
 import { getUserInfo } from "@/services/auth.service";
 import { useBranchsQuery } from "@/redux/api/branchApi";
 import FormSelectField from "../ui/Forms/FormSelectField";
@@ -15,6 +15,8 @@ import FormDatePicker from "../ui/Forms/FormDatePicker";
 import './Order.css'
 import { useDispatch, useSelector } from "react-redux";
 import { setEndDate, setStartDate, setUserId } from "@/redux/api/dateSlics";
+import Link from "next/link";
+import { GrFormView } from "react-icons/gr";
 
 const Order = () => {
 
@@ -29,7 +31,7 @@ const Order = () => {
   // -----------------------------date-------------------------------------------
   const dispatch = useDispatch();
   const date = useSelector((state:any) => state?.date);
-  console.log(date)
+
   const startDate = date?.startDate;
   const endDate = date?.endDate;
   const userId = date?.userId;
@@ -42,8 +44,6 @@ const Order = () => {
   query["startDate"] = startDate;
   query["endDate"] = endDate;
   query["userId"] = userId;
-
-console.log(query)
   /// ------------------------------------------------- Get all Branch----------------
   const { data: branch, isLoading: branlodding } = useBranchsQuery({
     limit: 10,
@@ -83,6 +83,7 @@ console.log(query)
     query: query,
   });
   const shoporders = shop?.shopOrders;
+  const meta1 = shop?.meta;
 
   useEffect(() => {
     if (role === "admin") {
@@ -90,7 +91,19 @@ console.log(query)
     } else if (role === "seller") {
       setOrder(shoporders || []);
     }
-  }, [role, orders, shoporders,]);
+  }, [role, orders, shoporders,startDate,endDate,userId]);
+
+  const grandTotalSum = order.reduce((sum, order) => sum + order.grandTotal, 0);
+  //------------------------------------------------- Get all Order End----------------
+
+  const handelorder = async (id: string) => {
+    try {
+      const { data } = await useOrderQuery(id);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }   
+  };
 
   const columns = [
     {
@@ -150,24 +163,18 @@ console.log(query)
       sorter: true,
     },
     {
-      title: role === "admin" && "Action",
+      title:"Action",
       render: function (data: any) {
         return (
           <>
-            {/* <Link href={`/admin/product/edit/${data?.id}`}>
-              <Button
-                style={{
-                  margin: "0px 5px",
-                }}
-                onClick={() => console.log(data)}
-                type="primary"
-              >
-                <EditOutlined />
+            
+              <Button   
+               onClick={() =>handelorder(data?.id)}>
+             <GrFormView/>
               </Button>
-            </Link> */}
             {role === "admin" && (
               <Button
-                // onClick={() => deleteHandler(data?.id,data?.name)}
+             
                 type="primary"
                 danger
               >
@@ -177,7 +184,8 @@ console.log(query)
           </>
         );
       },
-    },
+    }
+   
   ];
 
   const onPaginationChange = (page: number, pageSize: number) => {
@@ -196,6 +204,8 @@ console.log(query)
     setSortOrder("");
     setSearchTerm("");
   };
+
+  
   
   const onSubmit = async (data: any) => {
     if (data?.startDate !== undefined) {
@@ -301,12 +311,13 @@ console.log(query)
         columns={columns}
         dataSource={order}
         pageSize={size}
-        totalPages={meta?.total}
+        totalPages={role === "admin" ? meta?.total : meta1?.total}
         showSizeChanger={true}
         onPaginationChange={onPaginationChange}
         onTableChange={onTableChange}
         showPagination={true}
       />
+     
        </div>
 
      

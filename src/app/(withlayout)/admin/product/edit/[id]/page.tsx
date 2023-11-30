@@ -45,7 +45,6 @@ const EditProductPage = ({ params }: IDProps) => {
   //.........................Product...update product
 
   const onSubmit = async (values: any) => {
-    console.log(values);
     if (values?.file) {
       const formData = new FormData();
       formData.append("file", values?.file);

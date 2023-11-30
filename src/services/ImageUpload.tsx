@@ -2,13 +2,12 @@ import { useState } from "react";
 // import Swal from "sweetalert2";
 import axios from "axios";
 import { Progress, message } from "antd";
-
+//@ts-ignore
 const ImageUpload = ({ onSuccess, folder }) => {
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [previewUrl, setPreviewUrl] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [uploadProgress, setUploadProgress] = useState(0);
-	console.log(process.env.NEXT_CLOUDINARY_CLOUD_NAME)
 
 	const uploadImage = async () => {
 		if (!selectedFile) {
@@ -65,7 +64,7 @@ const ImageUpload = ({ onSuccess, folder }) => {
 
 	const handleFileChange = (e) => {
 		const file = e.target.files[0];
-		console.log(file)
+		
 		setSelectedFile(file);
 		const reader = new FileReader();
 		reader.onload = () => {
@@ -136,7 +135,7 @@ export default ImageUpload;
 
 /* // handle after uploading image to cloudinary
 const handleUserUploadSuccess = async (imageData) => {
-	console.log(imageData);
+	
 };
 
 <ImageUpload onSuccess={handleUserUploadSuccess} folder={"folder name here"} /> */
