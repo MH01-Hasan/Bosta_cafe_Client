@@ -9,12 +9,14 @@ interface CartItem {
   size:string  
   category:object
   cartQuantity: number;
+  discountPrice: number;
 }
 
 interface CartState {
   cartItem: CartItem[];
   cartTotalQuantity: number;
   cartTotalAmount: number;
+
 }
 
 const storedCartData = typeof localStorage !== 'undefined' ? localStorage.getItem("cartItem") : null
@@ -23,6 +25,7 @@ const initialState: CartState = {
   cartItem: storedCartData?.length ? JSON.parse(storedCartData) : [],
   cartTotalQuantity: 0,
   cartTotalAmount: 0,
+ 
 };
 
 const cartslice = createSlice({
@@ -33,8 +36,10 @@ const cartslice = createSlice({
       const itemIndex = state.cartItem.findIndex((item) => item.id === action.payload.id);
       if (itemIndex >= 0) {
         state.cartItem[itemIndex].cartQuantity += 1;
+        // state.cartItem[itemIndex].discountPrice = Number(action.payload.discount)/100 * Number(action.payload.price);
+       
       } else {
-        const tempProduct = { ...action.payload, cartQuantity: 1 };
+        const tempProduct = { ...action.payload, cartQuantity: 1, discountPrice:Number(action.payload.price)-((Number(action.payload.discount)/100 * Number(action.payload.price)) ||0)};
         state.cartItem.push(tempProduct);
       }
       localStorage.setItem('cartItem', JSON.stringify(state.cartItem));
@@ -65,9 +70,9 @@ const cartslice = createSlice({
     getTotals(state) {
       let { total, quantity } = state.cartItem.reduce(
         (cartTotal, cartItem) => {
-          const { price, cartQuantity } = cartItem; // Assuming 'price' property is present in CartItem
-          const itemTotal = Number(price) * cartQuantity;
-          cartTotal.total += itemTotal;
+          const { price, cartQuantity,discountPrice} = cartItem; 
+
+          cartTotal.total += Number(discountPrice) * cartQuantity;
           cartTotal.quantity += cartQuantity;
           return cartTotal;
         },

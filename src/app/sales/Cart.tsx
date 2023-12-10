@@ -41,6 +41,7 @@ const Cart = () => {
     dispatch(getTotals());
   }, [cart, dispatch]);
   const cart_Item = cart?.cartItem;
+  console.log(cart);
 
   //------------------------------------------remove cart//----------------------------
   const handelremovecart = (cartItem: any) => {
@@ -95,9 +96,15 @@ const Cart = () => {
       dataIndex: "price",
     },
     {
+      title: "Discount",
+      render: (record: any) => {
+        return `${record.discount} %`;
+      },
+    },
+    {
       title: "SUB TOTAL",
       render: (record: any) => {
-        return (Number(record.price) * record.cartQuantity).toFixed(2);
+        return (Number(record.discountPrice) * record.cartQuantity).toFixed(2);
       },
     },
     {

@@ -1,7 +1,7 @@
 "use client";
 import { DeleteOutlined, ReloadOutlined } from "@ant-design/icons";
 import UMTable from "@/components/ui/UMTable";
-import { Button,  Input,  } from "antd";
+import { Button,  Input, Table,  } from "antd";
 import { useState, useEffect } from "react";
 import { useDebounced } from "@/redux/hooks";
 import dayjs from "dayjs";
@@ -94,16 +94,14 @@ const Order = () => {
   }, [role, orders, shoporders,startDate,endDate,userId]);
 
   const grandTotalSum = order.reduce((sum, order) => sum + order.grandTotal, 0);
+  console.log(grandTotalSum);
   //------------------------------------------------- Get all Order End----------------
 
-  const handelorder = async (id: string) => {
-    try {
-      const { data } = await useOrderQuery(id);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }   
+  const handelsingelorder = async (data:any) => {
+    console.log(data);
+    
   };
+
 
   const columns = [
     {
@@ -169,7 +167,7 @@ const Order = () => {
           <>
             
               <Button   
-               onClick={() =>handelorder(data?.id)}>
+               onClick={() =>handelsingelorder(data)}>
              <GrFormView/>
               </Button>
             {role === "admin" && (
@@ -316,7 +314,10 @@ const Order = () => {
         onPaginationChange={onPaginationChange}
         onTableChange={onTableChange}
         showPagination={true}
+        footer={true}
       />
+    
+
      
        </div>
 

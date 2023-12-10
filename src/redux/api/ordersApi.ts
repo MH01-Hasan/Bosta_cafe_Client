@@ -53,8 +53,8 @@ export const OrdersApi = baseApi.injectEndpoints({
     }),
 
     order: build.query({
-      query: (id) => ({
-        url: `${ORDERS_URL}/order/${id}`,
+      query: (arg) => ({
+        url: `${ORDERS_URL}/order/${arg.id}`,
         method: "GET",
       }),
       providesTags: [tagTypes.order],
