@@ -18,6 +18,7 @@
     "jwt-decode": "^3.1.2",
     "next": "latest",
     "react": "latest",
+    "react-barcode": "^1.4.6",
     "react-dom": "latest",
     "react-draggable": "^4.4.6",
     "react-hook-form": "^7.46.2",

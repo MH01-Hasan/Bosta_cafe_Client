@@ -1,36 +1,40 @@
 "use client";
 import { DeleteOutlined, ReloadOutlined } from "@ant-design/icons";
 import UMTable from "@/components/ui/UMTable";
-import { Button,  Input, Table,  } from "antd";
+import { Button, Input } from "antd";
 import { useState, useEffect } from "react";
 import { useDebounced } from "@/redux/hooks";
 import dayjs from "dayjs";
 import ActionBar from "@/components/ui/ActionBar";
-import { useOrderQuery, useOrdersQuery, useShopOrdersQuery } from "@/redux/api/ordersApi";
+import { useOrdersQuery, useShopOrdersQuery } from "@/redux/api/ordersApi";
 import { getUserInfo } from "@/services/auth.service";
 import { useBranchsQuery } from "@/redux/api/branchApi";
 import FormSelectField from "../ui/Forms/FormSelectField";
 import Form from "../ui/Forms/Form";
 import FormDatePicker from "../ui/Forms/FormDatePicker";
-import './Order.css'
+import "./Order.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setEndDate, setStartDate, setUserId } from "@/redux/api/dateSlics";
-import Link from "next/link";
 import { GrFormView } from "react-icons/gr";
+import Modal from "./Modal";
+import Barcode from "react-barcode";
 
 const Order = () => {
-
-  const query: any= {};
+  const query: any = {};
   const [page, setPage] = useState<number>(1);
   const [size, setSize] = useState<number>(20);
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
+    // -----------------------------query state end -------------------------------------------
+
   const [order, setOrder] = useState<any[]>([]);
+  const [singelorder, setSingelorder] = useState<any>({});
+  const [showModal, setShowModal] = useState(false);
 
   // -----------------------------date-------------------------------------------
   const dispatch = useDispatch();
-  const date = useSelector((state:any) => state?.date);
+  const date = useSelector((state: any) => state?.date);
 
   const startDate = date?.startDate;
   const endDate = date?.endDate;
@@ -61,6 +65,9 @@ const Order = () => {
 
   // ------------------------------------------------- Get all Branch End----------------
 
+
+  // -------------------------------------------------searchTerm dely function ----------------
+
   const debouncedTerm = useDebounced({
     searchQuery: searchTerm,
     delay: 600,
@@ -69,7 +76,7 @@ const Order = () => {
   if (!!debouncedTerm) {
     query["searchTerm"] = debouncedTerm;
   }
-
+ //------------------------------------------------- Get User info ----------------
   const { role, id } = getUserInfo() as any;
 
   //------------------------------------------------- Get all Order----------------
@@ -91,17 +98,14 @@ const Order = () => {
     } else if (role === "seller") {
       setOrder(shoporders || []);
     }
-  }, [role, orders, shoporders,startDate,endDate,userId]);
-
-  const grandTotalSum = order.reduce((sum, order) => sum + order.grandTotal, 0);
-  console.log(grandTotalSum);
+  }, [role, orders, shoporders, startDate, endDate, userId]);
   //------------------------------------------------- Get all Order End----------------
 
-  const handelsingelorder = async (data:any) => {
-    console.log(data);
-    
-  };
+  //------------------------------------------------- Get all Order total amount----------------
+  const grandTotalSum = order.reduce((sum, order) => sum + order.grandTotal, 0);
+  console.log(grandTotalSum);
 
+  //------------------------------------------------- Table data here --------------------------
 
   const columns = [
     {
@@ -161,30 +165,43 @@ const Order = () => {
       sorter: true,
     },
     {
-      title:"Action",
+      title: "Action",
       render: function (data: any) {
         return (
-          <>
-            
-              <Button   
-               onClick={() =>handelsingelorder(data)}>
-             <GrFormView/>
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <div>
+              <Button onClick={() => handelosingelorder(data)}>
+                <GrFormView />
               </Button>
+            </div>
+
             {role === "admin" && (
-              <Button
-             
-                type="primary"
-                danger
-              >
+              <Button type="primary" danger>
                 <DeleteOutlined />
               </Button>
             )}
-          </>
+          </div>
         );
       },
-    }
-   
+    },
   ];
+  // -------------------------------------------------- show single data and open modal----------------------------------------
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const handelosingelorder = (data: any) => {
+    setSingelorder(data);
+    openModal();
+  };
+  // --------------------------------------------------Pagination Options----------------------------------------
 
   const onPaginationChange = (page: number, pageSize: number) => {
     setPage(page);
@@ -195,30 +212,25 @@ const Order = () => {
     setSortBy(field as string);
     setSortOrder(order === "ascend" ? "asc" : "desc");
   };
-
+  // --------------------------------------------------Reset Filter data----------------------------------------
 
   const resetFilters = () => {
     setSortBy("");
     setSortOrder("");
     setSearchTerm("");
   };
-
-  
-  
+  // --------------------------------------------------date set in filter data----------------------------------------
   const onSubmit = async (data: any) => {
     if (data?.startDate !== undefined) {
       dispatch(setStartDate(data?.startDate));
     } else if (data?.endDate !== undefined) {
       dispatch(setEndDate(data?.endDate));
     }
-    
-    if (role ==="admin" && data?.userId !== undefined) {
-      dispatch(setUserId(data?.userId));
-     
-    } 
-  };
- 
 
+    if (role === "admin" && data?.userId !== undefined) {
+      dispatch(setUserId(data?.userId));
+    }
+  };
 
   return (
     <div
@@ -226,62 +238,45 @@ const Order = () => {
         margin: "15px 20px",
       }}
     >
-       <ActionBar title="Orders List"></ActionBar>
+      <ActionBar title="Orders List"></ActionBar>
 
-
-       <div className="order-body">
-       <div className="order_header">
-            <Form submitHandler={onSubmit}
-          
+      <div className="order-body">
+        <div className="order_header">
+          {/* ----------------------Search Field and filter option ------------------------------------------- */}
+          <Form submitHandler={onSubmit}>
+            <div
+              className={role === "admin" ? "search-field1" : "search-field"}
             >
-              <div className={role==='admin'?'search-field1':'search-field'} >
-                <div>
-                  
-                    <FormDatePicker
-                      name="startDate"
-                      label="Start Date"
-                      size="large"
-                    />
-                  
-                </div>
-                <div className="date-picker">
-                    <FormDatePicker
-                      name="endDate"
-                      label="End Date"
-                      size="large"
-                    />
-              
-                </div>
-                {role === "admin" && (
-                  <div className="secleteduser">
-                   
-                      <FormSelectField
-                        size="large"
-                        name="userId"
-                        options={allbranchOptions}
-                        label="Branch"
-                        placeholder="Select"
-                      />
-                  
-                  </div>
-                )}
-                <div>
-                
-                    <Button
-                    className="search-btn"
-                      htmlType="submit"
-                    >
-                      Search
-                    </Button>
-                 
-                </div>
+              <div>
+                <FormDatePicker
+                  name="startDate"
+                  label="Start Date"
+                  size="large"
+                />
               </div>
-            </Form>
-        
+              <div className="date-picker">
+                <FormDatePicker name="endDate" label="End Date" size="large" />
+              </div>
+              {role === "admin" && (
+                <div className="secleteduser">
+                  <FormSelectField
+                    size="large"
+                    name="userId"
+                    options={allbranchOptions}
+                    label="Branch"
+                    placeholder="Select"
+                  />
+                </div>
+              )}
+              <div>
+                <Button className="search-btn" htmlType="submit">
+                  Search
+                </Button>
+              </div>
+            </div>
+          </Form>
 
-
-
-          <div className={role==='admin'?'seach-input1':'seach-input'}>
+          <div className={role === "admin" ? "seach-input1" : "seach-input"}>
             <Input
               type="text"
               size="large"
@@ -303,26 +298,138 @@ const Order = () => {
             </div>
           </div>
         </div>
+  {/* ----------------------Table------------------------------------------- */}
+        <UMTable
+          loading={role === "admin" ? ordersIsLoading : isLoading}
+          columns={columns}
+          dataSource={order}
+          pageSize={size}
+          totalPages={role === "admin" ? meta?.total : meta1?.total}
+          showSizeChanger={true}
+          onPaginationChange={onPaginationChange}
+          onTableChange={onTableChange}
+          showPagination={true}
+          footer={true}
+        />
+      </div>
+      {/* -----------------------show single order and Print Options and open modal */}
+      <Modal show={showModal} onClose={closeModal}>
+        <div className="order-modal">
+          <div>
+            <div className="invoice">
+              <div className="header">
+                <h1>Invoice</h1>
+                <p>Invoice # : {singelorder?.orderId}</p>
+                <p>
+                  Date :{" "}
+                  {singelorder?.createdAt &&
+                    dayjs(singelorder?.createdAt).format("MMM D, YYYY hh:mm A")}
+                </p>
+              </div>
+              <div className="customer-info">
+                <h2>Shop Information</h2>
+                <p>Shop ID : {singelorder?.user?.username}</p>
+                <p>Email :{singelorder?.user?.email}</p>
+                <p>Phone : {singelorder?.user?.contactNo}</p>
+                <p>Address :{singelorder?.user?.address}</p>
+              </div>
+              <table className="invoice-table">
+                <thead>
+                  <tr>
+                    <th>SL.NO</th>
 
-      <UMTable
-        loading={role === "admin" ? ordersIsLoading : isLoading}
-        columns={columns}
-        dataSource={order}
-        pageSize={size}
-        totalPages={role === "admin" ? meta?.total : meta1?.total}
-        showSizeChanger={true}
-        onPaginationChange={onPaginationChange}
-        onTableChange={onTableChange}
-        showPagination={true}
-        footer={true}
-      />
-    
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {singelorder?.cart?.cartItem?.map(
+                    (item: any, index: number) => (
+                      <tr>
+                        <td>{index + 1}</td>
 
-     
-       </div>
+                        <td>
+                          {item?.name}/{item?.flavor}
+                        </td>
 
-     
-      
+                        <td>{item?.cartQuantity}</td>
+
+                        <td>{item?.discountPrice}</td>
+
+                        <td>
+                          {Number(item?.cartQuantity) *
+                            Number(item?.discountPrice)}
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+
+                <tfoot>
+                  <br />
+                  <tr>
+                    <td colSpan={4} className="text-right">
+                      Subtotal:
+                    </td>
+                    <td>{singelorder?.cart?.cartTotalAmount.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td colSpan={4} className="text-right">
+                      Discount:
+                    </td>
+                    <td>
+                      {(singelorder?.discount
+                        ? singelorder?.discount
+                        : 0
+                      ).toFixed(2)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan={4} className="text-right">
+                      Total:
+                    </td>
+                    <td>
+                      {(
+                        singelorder?.cart?.cartTotalAmount -
+                        singelorder?.discount
+                      ).toFixed(2)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+              <hr />
+              <div className="invoice-last-section">
+                <div className="payment-type">
+                  <p>PAYMENT-TYPE</p>
+                  <p
+                    style={{
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {singelorder?.paymentMethod}
+                  </p>
+                </div>
+                <div className="recive-Amount">
+                  <p>AMOUNT</p>
+                  <p>{singelorder?.receivedAmount}</p>
+                </div>
+                <div className="exchange">
+                  <p>CHANGE RETURN</p>
+                  <p>{singelorder?.changeReturn}</p>
+                </div>
+              </div>
+
+              <div className="footer">
+                <p>Thank You For Shopping With Us. Please visit again.</p>
+
+                <Barcode value={singelorder?.orderId} width={1} height={30} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

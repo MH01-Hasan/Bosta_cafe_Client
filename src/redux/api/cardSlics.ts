@@ -36,8 +36,6 @@ const cartslice = createSlice({
       const itemIndex = state.cartItem.findIndex((item) => item.id === action.payload.id);
       if (itemIndex >= 0) {
         state.cartItem[itemIndex].cartQuantity += 1;
-        // state.cartItem[itemIndex].discountPrice = Number(action.payload.discount)/100 * Number(action.payload.price);
-       
       } else {
         const tempProduct = { ...action.payload, cartQuantity: 1, discountPrice:Number(action.payload.price)-((Number(action.payload.discount)/100 * Number(action.payload.price)) ||0)};
         state.cartItem.push(tempProduct);
@@ -70,7 +68,7 @@ const cartslice = createSlice({
     getTotals(state) {
       let { total, quantity } = state.cartItem.reduce(
         (cartTotal, cartItem) => {
-          const { price, cartQuantity,discountPrice} = cartItem; 
+          const {cartQuantity,discountPrice} = cartItem; 
 
           cartTotal.total += Number(discountPrice) * cartQuantity;
           cartTotal.quantity += cartQuantity;
